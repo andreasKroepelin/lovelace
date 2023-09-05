@@ -49,12 +49,14 @@ This package does not assume any specific set of keywords or language constructs
 For example, you might want to write something like
 ```typ
 #pseudocode(
-  $x <- a$
+  $x <- a$,
   [*repeat until convergence*], ind,
-    $x <- (x + a/x) / 2$, ded
+    $x <- (x + a/x) / 2$, ded,
   [*return* $x$]
 )
 ```
+![custom-keywords](examples/custom-keywords.png)
+
 for some more abstract, less implementation concerned pseudocode that follows
 your own convention, most suitable to you.
 
