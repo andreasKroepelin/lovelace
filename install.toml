@@ -1,1 +1,1 @@
-include =  ["typst.toml", "lib.typ", "README.md"]
+include =  ["typst.toml", "lib.typ", "README.md", "examples/*"]
