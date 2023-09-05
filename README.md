@@ -1,13 +1,12 @@
 # Lovelace
-This is a package for writing pseudo codes in [Typst](https://typst.app/).
+This is a package for writing pseudocode in [Typst](https://typst.app/).
 It is named after the computer science pioneer
 [Ada Lovelace](https://en.wikipedia.org/wiki/Ada_Lovelace) and inspired by the
 [pseudo package](https://ctan.org/pkg/pseudo) for LaTeX.
 
-![GitHub](https://img.shields.io/github/license/andreasKroepelin/polylux)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/andreasKroepelin/polylux)
-![GitHub Repo stars](https://img.shields.io/github/stars/andreasKroepelin/polylux)
-[![Demo badge](https://img.shields.io/badge/demo-pdf-blue)](https://github.com/andreasKroepelin/polylux/releases/latest/download/demo.pdf)
+![GitHub license](https://img.shields.io/github/license/andreasKroepelin/lovelace)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/andreasKroepelin/lovelace)
+![GitHub Repo stars](https://img.shields.io/github/stars/andreasKroepelin/lovelace)
 
 ## Usage
 Import the package using
@@ -37,14 +36,15 @@ You are then ready to go to typeset some pseudocode:
 )
 ```
 resulting in:
+
 ![euclid](examples/euclid.png)
 
-As you can see, every line of your pseudo code is represented by a single content
+As you can see, every line of your pseudocode is represented by a single content
 argument.
 Additionally, we use `ind` and `ded` to control the indentation level:
 `ind` (indent) to go one level deeper, `ded` (dedent) to go one level back.
 Don't forget to put all the commas in between!
-The content of your pseudo code is up to you.
+The content of your pseudocode is up to you.
 This package does not assume any specific set of keywords or language constructs.
 For example, you might want to write something like
 ```typ
@@ -55,7 +55,7 @@ For example, you might want to write something like
   [*return* $x$]
 )
 ```
-for some more abstract, less implementation concerned pseudo code that follows
+for some more abstract, less implementation concerned pseudocode that follows
 your own convention, most suitable to you.
 
 There are two other elements you can use as positional arguments to `#pseudocode`:
@@ -106,6 +106,7 @@ If you want to display a full algorithm with bells and whistles, you can use
 )
 ```
 resulting in:
+
 ![euclid-algorithm](examples/euclid-algorithm.png)
 
 `#algorithm` creates a figure with `kind: "lovelace"` so it gets its own counter
@@ -116,7 +117,7 @@ Note that such figures are only displayed correctly when you used the setup
 function mentioned above!
 
 ### Comments
-Again, the content of your pseudo code is completely up to you, and that includes
+Again, the content of your pseudocode is completely up to you, and that includes
 comments.
 However, Lovelace provides a sensible `#comment` function you can use:
 ```typ
@@ -161,11 +162,12 @@ For example, let's use thin blue indentation guides and roman line numbering:
 )
 ```
 resulting in:
+
 ![euclid-modified](examples/euclid-modified.png)
 
 Also, there are some optional arguments to `lovelace-setup`:
 - `line-number-style`: a function that takes content and returns content, used
-  to display the line numbers in the pseudo code, default `text.with(size: .7em)`,
+  to display the line numbers in the pseudocode, default `text.with(size: .7em)`,
   note that this is different from the `line-number-transform` argument to
   `#pseudocode` as the latter has an effect on line numbers in references as well.
 - `line-number-supplement`: some content that is placed before the line number
