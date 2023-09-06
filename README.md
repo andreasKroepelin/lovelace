@@ -190,6 +190,7 @@ Line and Algorithm) and thin indentation guides.
     <line:blinken>,
     [Links blinken],
     [In den linken Außenspiegel schauen],
+    [Schulterblick],
     [*wenn* niemand nähert sich auf der linken Spur, *dann*], ind,
       [Spur wechseln], ded,
     [Blinker aus],
