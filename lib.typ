@@ -113,9 +113,13 @@
               it.supplement
               sym.space.nobreak
               counter(figure.where(kind: "lovelace")).display(it.numbering)
-              [: ]
+              if it.caption != none {
+                [: ]
+              } else {
+                [.]
+              }
             })
-            it.caption
+            if it.caption != none {it.caption.body}
           }
 
         )
