@@ -131,6 +131,47 @@ However, Lovelace provides a sensible `#comment` function you can use:
 ![comment](examples/comment.png)
 
 
+### Raw Text
+You can use raw text syntax in typst to simplify the syntax of pseudocode.
+
+We use `'''` to escape the markdown code block syntax here, and you can look directly at [the source file](./examples/rawtext.typ).
+
+```typ
+#show: setup-lovelace
+
+#let redbold(it) = {
+  set text(fill: red, weight: "bold")
+  it
+}
+
+#let pseudocode = pseudocode.with(scope: (redbold: redbold))
+
+#algorithm(
+  caption: [The Euclidean algorithm],
+  pseudocode(
+    '''typ
+    #no-number
+    *input:* integers $a$ and $b$
+    #no-number
+    *output:* greatest common divisor of $a$ and $b$
+    <line:loop-start>
+    *if* $a == b$ *goto* @line:loop-end
+    *if* $a > b$ *then*
+      #redbold[$a <- a - b$] #comment[and a comment]
+    *else*
+      #redbold[$b <- b - a$] #comment[and another comment]
+    *end*
+    *goto* @line:loop-start
+    <line:loop-end>
+    *return* $a$
+    '''
+  )
+)
+```
+
+![rawtext](examples/rawtext.png)
+
+
 ### Customisation
 Lovelace provides a couple of customisation options.
 
@@ -174,6 +215,7 @@ Also, there are some optional arguments to `lovelace-setup`:
   `#pseudocode` as the latter has an effect on line numbers in references as well.
 - `line-number-supplement`: some content that is placed before the line number
   when referencing it, default `"Line"`
+- `body-inset`: the inset of body, default to be `(bottom: 5pt)`
 
 If you want to avoid having to repeat all those configurations, here is what
 you can do.

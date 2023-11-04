@@ -2,11 +2,44 @@
 #let ded = metadata("lovelace dedent")
 #let no-number = metadata("lovelace no number")
 
+#let comment(body) = {
+  h(1fr)
+  text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
+}
+
+#let _typst2lovelace(typst-code, scope: (:)) = {
+  let indent = 0
+  let last-indent = 0
+  let res = ()
+  for line in typst-code.text.split("\n") {
+    let whitespaces = line.find(regex("^\\s+"))
+    let current-indent = if (whitespaces != none) { whitespaces.len() } else { 0 }
+    if (indent == 0 and current-indent != 0) {
+      indent = current-indent
+    }
+    if (current-indent > last-indent) {
+      res = res + (ind,) * int((current-indent - last-indent) / indent)
+    } else if (current-indent < last-indent) {
+      res = res + (ded,) * int((last-indent - current-indent) / indent)
+    }
+    last-indent = current-indent
+    let line-code = line.slice(current-indent)
+    let match = line-code.match(regex("^<(.*)>\\s*$"))
+    if (match != none) {
+      res.push(label(match.captures.at(0)))
+    } else {
+      res.push(eval(line-code, mode: "markup", scope: (no-number: no-number, comment: comment) + scope))
+    }
+  }
+  res
+}
+
 #let pseudocode(
   line-numbering: true,
   line-number-transform: it => it,
   indentation-guide-stroke: none,
-  ..children
+  scope: (:),
+  ..args
 ) = {
   let lines = ()
   let indentation = 0
@@ -25,7 +58,16 @@
     x
   }
 
-  for child in children.pos() {
+  let children = ()
+  for child in args.pos() {
+    if type(child) == "content" and child.func() == raw {
+      children = children + _typst2lovelace(child, scope: scope)
+    } else {
+      children.push(child)
+    }
+  }
+
+  for child in children {
     if child == ind {
       indentation += 1
     } else if child == ded {
@@ -81,6 +123,7 @@
 #let setup-lovelace(
   line-number-style: text.with(size: .7em),
   line-number-supplement: "Line",
+  body-inset: (bottom: 5pt),
   body
 ) = {
   show ref: it => if (
@@ -124,7 +167,7 @@
 
         )
         block(
-          inset: (bottom: 5pt),
+          inset: body-inset,
           breakable: true,
           it.body
         )
@@ -140,9 +183,3 @@
 
   body
 }
-
-#let comment(body) = {
-  h(1fr)
-  text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
-}
-
