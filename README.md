@@ -20,7 +20,7 @@ Main features include:
 ## Usage
 Import the package using
 ```typ
-#import "@preview/lovelace:0.1.0": *
+#import "@preview/lovelace:0.2.0": *
 ```
 You should then call the setup function in a show rule _at the top of your
 document_:

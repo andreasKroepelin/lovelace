@@ -1,8 +1,8 @@
 [package]
 name = "lovelace"
-version = "0.1.0"
+version = "0.2.0"
 entrypoint = "lib.typ"
-authors = ["Andreas Kröpelin"]
+authors = ["Andreas Kröpelin", "Lovelace contributors"]
 license = "MIT"
 description = "Algorithms in pseudocode, unopinionated and flexible"
 repository = "https://github.com/andreasKroepelin/lovelace"
