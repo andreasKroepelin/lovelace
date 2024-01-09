@@ -134,7 +134,6 @@ However, Lovelace provides a sensible `#comment` function you can use:
 ### Raw Text
 You can use raw text syntax in typst to simplify the syntax of pseudocode.
 
-We use `'''` to escape the markdown code block syntax here, and you can look directly at [the source file](./examples/rawtext.typ).
 
 ```typ
 #show: setup-lovelace
