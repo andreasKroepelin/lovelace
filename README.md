@@ -195,22 +195,21 @@ arguments:
 
 For example, let's use thin blue indentation guides and roman line numbering:
 ```typ
-#pseudocode(
+#pseudocode-list(
   line-number-transform: num => numbering("i", num),
   indentation-guide-stroke: .5pt + aqua,
-  no-number,
-  [*input:* integers $a$ and $b$],
-  no-number,
-  [*output:* greatest common divisor of $a$ and $b$],
-  [*while* $a != b$ *do*], ind,
-    [*if* $a > b$ *then*], ind,
-      $a <- a - b$, ded,
-    [*else*], ind,
-      $b <- b - a$, ded,
-    [*end*], ded,
-  [*end*],
-  [*return* $a$]
-)
+)[
+  - *input:* integers $a$ and $b$
+  - *output:* greatest common divisor of $a$ and $b$
+  + *while* $a != b$ *do*
+    + *if* $a > b$ *then*
+      + $a <- a - b$
+    + *else*
+      + $b <- b - a$
+    + *end*
+  + *end*
+  + *return* $a$
+]
 ```
 resulting in:
 
