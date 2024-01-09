@@ -8,6 +8,15 @@ It is named after the computer science pioneer
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/andreasKroepelin/lovelace)
 ![GitHub Repo stars](https://img.shields.io/github/stars/andreasKroepelin/lovelace)
 
+Main features include:
+- arbitrary keywords and syntax structures
+- multiple interfaces for typesetting pseudocode
+- optional line numbering (configurable per line)
+- line labels
+- customisable indentation guides
+- custom figure kind
+
+
 ## Usage
 Import the package using
 ```typ
@@ -41,6 +50,7 @@ resulting in:
 
 As you can see, every line of your pseudocode is represented by a single content
 argument.
+(If you don't like this syntax, consider one of the [alternatives](#alternative-input-methods).)
 Additionally, we use `ind` and `ded` to control the indentation level:
 `ind` (indent) to go one level deeper, `ded` (dedent) to go one level back.
 Don't forget to put all the commas in between!
@@ -83,9 +93,47 @@ to reference that line later:
 ```
 ![goto](examples/goto.png)
 
+### Alternative input methods
+Besides `#pseudocode`, there are other ways to specify pseudocode with Lovelace.
+#### Pseudocode as an enumeration/list
+Using the function `pseudocode-list`, you can type your code using Typst's enumerations and bullet point lists:
+```typ
+#pseudocode-list[
+  - *input:* integers $a$ and $b$
+  - *output:* greatest common divisor of $a$ and $b$
+  + *while* $a != b$ *do*
+    + *if* $a > b$ *then*
+      + $a <- a - b$
+    + *else*
+      + $b <- b - a$
+    + *end*
+  + *end*
+  + *return* $a$
+]
+```
+![list](examples/list.png)
+
+As you can see, each enumeration item (starting with a `+`) becomes a numbered line and each list item (starting with a `-`) becomes a line without a number.
+We also don't need to use `ind` and `ded` as Typst detects the indentation level of the list/enumeration.
+
+If you want to attach a label to a line, you can use the function `#line-label`:
+```typ
+#pseudocode-list[
+  - *input:* number $n in NN$
+  - *output:* zero
+  + *while* $n > 0$
+    + $n <- n - 1$ #line-label(<line:decr>)
+  + *end*
+  + *return* $n$
+]
+
+In @line:decr, we decrease $n$.
+
+```
+![list label](examples/list-label.png)
 
 ### Algorithm as figure
-`#pseudocode` is great if you just want to show some lines of code.
+`#pseudocode` and friends are great if you just want to show some lines of code.
 If you want to display a full algorithm with bells and whistles, you can use
 `#algorithm`:
 ```typ
@@ -134,7 +182,8 @@ However, Lovelace provides a sensible `#comment` function you can use:
 ### Customisation
 Lovelace provides a couple of customisation options.
 
-First, the `pseudocode` function accepts optional keyword arguments:
+First, the `pseudocode` and `pseudocode-list` functions accepts optional keyword
+arguments:
 - `line-numbering`: `true` or `false`, whether to display line numbers, default
   `true`
 - `line-number-transform`: a function that takes in the line number as an integer
@@ -146,22 +195,21 @@ First, the `pseudocode` function accepts optional keyword arguments:
 
 For example, let's use thin blue indentation guides and roman line numbering:
 ```typ
-#pseudocode(
+#pseudocode-list(
   line-number-transform: num => numbering("i", num),
   indentation-guide-stroke: .5pt + aqua,
-  no-number,
-  [*input:* integers $a$ and $b$],
-  no-number,
-  [*output:* greatest common divisor of $a$ and $b$],
-  [*while* $a != b$ *do*], ind,
-    [*if* $a > b$ *then*], ind,
-      $a <- a - b$, ded,
-    [*else*], ind,
-      $b <- b - a$, ded,
-    [*end*], ded,
-  [*end*],
-  [*return* $a$]
-)
+)[
+  - *input:* integers $a$ and $b$
+  - *output:* greatest common divisor of $a$ and $b$
+  + *while* $a != b$ *do*
+    + *if* $a > b$ *then*
+      + $a <- a - b$
+    + *else*
+      + $b <- b - a$
+    + *end*
+  + *end*
+  + *return* $a$
+]
 ```
 resulting in:
 
