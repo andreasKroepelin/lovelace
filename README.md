@@ -166,7 +166,7 @@ You can use raw text syntax in typst to simplify the syntax of pseudocode.
     ```
   )
 )
-```
+````
 
 ![rawtext](examples/rawtext.png)
 
