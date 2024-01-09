@@ -1,6 +1,20 @@
 #let ind = metadata("lovelace indent")
 #let ded = metadata("lovelace dedent")
 #let no-number = metadata("lovelace no number")
+#let line-label(it) = {
+  if type(it) == str {
+    it = label(it)
+  } else if type(it) == label {
+    // nothing
+  } else {
+    panic("line-label requires either a string or a label.")
+  }
+
+  metadata((
+    identifier: "lovelace line label",
+    label: it
+  ))
+}
 
 #let comment(body) = {
   h(1fr)
@@ -74,7 +88,7 @@
       indentation -= 1
     } else if child == no-number {
       numbered-line = false
-    } else if type(child) == "label" {
+    } else if type(child) == label {
       curr-label = child
     } else {
       lines.push((
@@ -117,6 +131,63 @@
     ..cells
   )
 }
+
+#let pseudocode-list(..config, body) = {
+  let is-not-empty(it) = {
+    return type(it) != content or not (
+      it.fields() == (:) or
+      (it.has("children") and it.children == ()) or
+      (it.has("children") and it.children.all(c => not is-not-empty(c))) or
+      (it.has("text") and it.text.match(regex("^\\s*$")) != none)
+    )
+  }
+
+  let transform-list(it) = {
+    if not it.has("children") {
+      return it
+    }
+
+    let transformed = ()
+    let current-normal-child = []
+    for child in it.children {
+      if child.func() in (enum.item, list.item) {
+        if is-not-empty(current-normal-child) {
+          transformed.push(current-normal-child)
+          current-normal-child = []
+        }
+        transformed.push(ind)
+        if child.func() == list.item {
+          transformed.push(no-number)
+        }
+        transformed.push(transform-list(child.body))
+        transformed.push(ded)
+      } else if (
+        child.func() == metadata and
+        child.value.at("identifier", default: "") == "lovelace line label" and
+        "label" in child.value
+      ) {
+        transformed.push(child.value.label)
+      } else {
+        current-normal-child += child
+      }
+    }
+    if is-not-empty(current-normal-child) {
+      transformed.push(current-normal-child)
+    }
+
+    transformed
+  }
+
+  let transformed = transform-list(body)
+  let cleaned = transformed.flatten().filter(is-not-empty)
+  let dedented = cleaned
+  while dedented.first() == ind and dedented.last() == ded {
+    dedented = dedented.slice(1, -1)
+  }
+
+  pseudocode(..config.named(), ..dedented)
+}
+
 
 #let algorithm = figure.with(kind: "lovelace", supplement: "Algorithm")
 

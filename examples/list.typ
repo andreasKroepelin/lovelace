@@ -3,10 +3,7 @@
 
 #show: setup-lovelace
 
-#pseudocode-list(
-  line-number-transform: num => numbering("i", num),
-  indentation-guide-stroke: .5pt + aqua,
-)[
+#pseudocode-list[
   - *input:* integers $a$ and $b$
   - *output:* greatest common divisor of $a$ and $b$
   + *while* $a != b$ *do*
@@ -18,3 +15,4 @@
   + *end*
   + *return* $a$
 ]
+
