@@ -214,7 +214,7 @@ Also, there are some optional arguments to `lovelace-setup`:
   `#pseudocode` as the latter has an effect on line numbers in references as well.
 - `line-number-supplement`: some content that is placed before the line number
   when referencing it, default `"Line"`
-- `body-inset`: the inset of body, default to be `(bottom: 5pt)`
+- `body-inset`: the inset of body, default `(bottom: 5pt)`
 
 If you want to avoid having to repeat all those configurations, here is what
 you can do.
