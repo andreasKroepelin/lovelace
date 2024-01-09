@@ -19,7 +19,7 @@
     }
     if current-indent > last-indent {
       res = res + (ind,) * int((current-indent - last-indent) / indent)
-    } else if (current-indent < last-indent) {
+    } else if current-indent < last-indent {
       res = res + (ded,) * int((last-indent - current-indent) / indent)
     }
     last-indent = current-indent
