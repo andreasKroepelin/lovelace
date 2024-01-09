@@ -17,7 +17,7 @@
     if indent == 0 and current-indent != 0 {
       indent = current-indent
     }
-    if (current-indent > last-indent) {
+    if current-indent > last-indent {
       res = res + (ind,) * int((current-indent - last-indent) / indent)
     } else if (current-indent < last-indent) {
       res = res + (ded,) * int((last-indent - current-indent) / indent)
