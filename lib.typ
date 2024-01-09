@@ -60,7 +60,7 @@
 
   let children = ()
   for child in args.pos() {
-    if type(child) == "content" and child.func() == raw {
+    if type(child) == content and child.func() == raw {
       children = children + _typst2lovelace(child, scope: scope)
     } else {
       children.push(child)
