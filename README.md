@@ -182,7 +182,8 @@ However, Lovelace provides a sensible `#comment` function you can use:
 ### Customisation
 Lovelace provides a couple of customisation options.
 
-First, the `pseudocode` function accepts optional keyword arguments:
+First, the `pseudocode` and `pseudocode-list` functions accepts optional keyword
+arguments:
 - `line-numbering`: `true` or `false`, whether to display line numbers, default
   `true`
 - `line-number-transform`: a function that takes in the line number as an integer
