@@ -135,7 +135,7 @@ However, Lovelace provides a sensible `#comment` function you can use:
 You can use raw text syntax in typst to simplify the syntax of pseudocode.
 
 
-```typ
+````typ
 #show: setup-lovelace
 
 #let redbold(it) = {
