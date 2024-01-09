@@ -148,7 +148,7 @@ You can use raw text syntax in typst to simplify the syntax of pseudocode.
 #algorithm(
   caption: [The Euclidean algorithm],
   pseudocode(
-    '''typ
+    ```typ
     #no-number
     *input:* integers $a$ and $b$
     #no-number
