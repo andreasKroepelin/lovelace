@@ -21,39 +21,11 @@
   text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
 }
 
-#let _typst2lovelace(typst-code, scope: (:)) = {
-  let indent = 0
-  let last-indent = 0
-  let res = ()
-  for line in typst-code.lines {
-    let whitespaces = line.find(regex("^\\s+"))
-    let current-indent = if whitespaces != none { whitespaces.len() } else { 0 }
-    if indent == 0 and current-indent != 0 {
-      indent = current-indent
-    }
-    if current-indent > last-indent {
-      res = res + (ind,) * int((current-indent - last-indent) / indent)
-    } else if current-indent < last-indent {
-      res = res + (ded,) * int((last-indent - current-indent) / indent)
-    }
-    last-indent = current-indent
-    let line-code = line.slice(current-indent)
-    let match = line-code.match(regex("^<(.*)>\\s*$"))
-    if (match != none) {
-      res.push(label(match.captures.at(0)))
-    } else {
-      res.push(eval(line-code, mode: "markup", scope: (no-number: no-number, comment: comment) + scope))
-    }
-  }
-  res
-}
-
 #let pseudocode(
   line-numbering: true,
   line-number-transform: it => it,
   indentation-guide-stroke: none,
-  scope: (:),
-  ..args
+  ..children
 ) = {
   let lines = ()
   let indentation = 0
@@ -72,16 +44,7 @@
     x
   }
 
-  let children = ()
-  for child in args.pos() {
-    if type(child) == content and child.func() == raw {
-      children.push(_typst2lovelace(child, scope: scope))
-    } else {
-      children.push(child)
-    }
-  }
-
-  for child in children {
+  for child in children.pos() {
     if child == ind {
       indentation += 1
     } else if child == ded {
@@ -186,6 +149,36 @@
   }
 
   pseudocode(..config.named(), ..dedented)
+}
+
+#let pseudocode-raw(typst-code, ..config, scope: (:)) = {
+  assert.eq(type(typst-code), content)
+  assert.eq(typst-code.func(), raw)
+
+  let indent = 0
+  let last-indent = 0
+  let res = ()
+  for line in typst-code.text.split("\n") {
+    let whitespaces = line.find(regex("^\\s+"))
+    let current-indent = if whitespaces != none { whitespaces.len() } else { 0 }
+    if indent == 0 and current-indent != 0 {
+      indent = current-indent
+    }
+    if current-indent > last-indent {
+      res += (ind,) * int((current-indent - last-indent) / indent)
+    } else if current-indent < last-indent {
+      res += (ded,) * int((last-indent - current-indent) / indent)
+    }
+    last-indent = current-indent
+    let line-code = line.slice(current-indent)
+    let match = line-code.match(regex("^<(.*)>\\s*$"))
+    if (match != none) {
+      res.push(label(match.captures.at(0)))
+    } else {
+      res.push(eval(line-code, mode: "markup", scope: (no-number: no-number, comment: comment) + scope))
+    }
+  }
+  pseudocode(..config.named(), ..res)
 }
 
 
