@@ -11,7 +11,7 @@
   let indent = 0
   let last-indent = 0
   let res = ()
-  for line in typst-code.text.split("\n") {
+  for line in typst-code.lines {
     let whitespaces = line.find(regex("^\\s+"))
     let current-indent = if (whitespaces != none) { whitespaces.len() } else { 0 }
     if (indent == 0 and current-indent != 0) {
