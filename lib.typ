@@ -13,7 +13,7 @@
   let res = ()
   for line in typst-code.lines {
     let whitespaces = line.find(regex("^\\s+"))
-    let current-indent = if (whitespaces != none) { whitespaces.len() } else { 0 }
+    let current-indent = if whitespaces != none { whitespaces.len() } else { 0 }
     if (indent == 0 and current-indent != 0) {
       indent = current-indent
     }
