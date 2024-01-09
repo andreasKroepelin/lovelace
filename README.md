@@ -163,7 +163,7 @@ You can use raw text syntax in typst to simplify the syntax of pseudocode.
     *goto* @line:loop-start
     <line:loop-end>
     *return* $a$
-    '''
+    ```
   )
 )
 ```
