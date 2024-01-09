@@ -16,6 +16,11 @@
   ))
 }
 
+#let comment(body) = {
+  h(1fr)
+  text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
+}
+
 #let pseudocode(
   line-numbering: true,
   line-number-transform: it => it,
@@ -146,12 +151,43 @@
   pseudocode(..config.named(), ..dedented)
 }
 
+#let pseudocode-raw(typst-code, ..config, scope: (:)) = {
+  assert.eq(type(typst-code), content)
+  assert.eq(typst-code.func(), raw)
+
+  let indent = 0
+  let last-indent = 0
+  let res = ()
+  for line in typst-code.text.split("\n") {
+    let whitespaces = line.find(regex("^\\s+"))
+    let current-indent = if whitespaces != none { whitespaces.len() } else { 0 }
+    if indent == 0 and current-indent != 0 {
+      indent = current-indent
+    }
+    if current-indent > last-indent {
+      res += (ind,) * int((current-indent - last-indent) / indent)
+    } else if current-indent < last-indent {
+      res += (ded,) * int((last-indent - current-indent) / indent)
+    }
+    last-indent = current-indent
+    let line-code = line.slice(current-indent)
+    let match = line-code.match(regex("^<(.*)>\\s*$"))
+    if (match != none) {
+      res.push(label(match.captures.at(0)))
+    } else {
+      res.push(eval(line-code, mode: "markup", scope: (no-number: no-number, comment: comment) + scope))
+    }
+  }
+  pseudocode(..config.named(), ..res)
+}
+
 
 #let algorithm = figure.with(kind: "lovelace", supplement: "Algorithm")
 
 #let setup-lovelace(
   line-number-style: text.with(size: .7em),
   line-number-supplement: "Line",
+  body-inset: (bottom: 5pt),
   body
 ) = {
   show ref: it => if (
@@ -195,7 +231,7 @@
 
         )
         block(
-          inset: (bottom: 5pt),
+          inset: body-inset,
           breakable: true,
           it.body
         )
@@ -211,9 +247,3 @@
 
   body
 }
-
-#let comment(body) = {
-  h(1fr)
-  text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
-}
-

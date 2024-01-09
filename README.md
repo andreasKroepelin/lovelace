@@ -94,7 +94,16 @@ to reference that line later:
 ![goto](examples/goto.png)
 
 ### Alternative input methods
-Besides `#pseudocode`, there are other ways to specify pseudocode with Lovelace.
+The main challenge for representing pseudocode in Typst is how to express
+indentations.
+As seen above, the standard way in Lovelace is to use `ind` and `ded`.
+However, there are two occasions where Typst already respects indentation:
+- enumerations/lists
+- raw text
+
+Besides `#pseudocode`, there are therefore two other options to specify
+pseudocode with Lovelace.
+
 #### Pseudocode as an enumeration/list
 Using the function `pseudocode-list`, you can type your code using Typst's enumerations and bullet point lists:
 ```typ
@@ -132,10 +141,57 @@ In @line:decr, we decrease $n$.
 ```
 ![list label](examples/list-label.png)
 
+#### Pseudocode as raw text
+You can also use raw text syntax in Typst to input pseudocode by using the
+function `pseudocode-raw`:
+
+````typ
+#let redbold = text.with(fill: red, weight: "bold")
+
+#pseudocode-raw(
+  scope: (redbold: redbold),
+  ```typ
+  #no-number
+  *input:* integers $a$ and $b$
+  #no-number
+  *output:* greatest common divisor of $a$ and $b$
+  <line:loop-start>
+  *if* $a == b$ *goto* @line:loop-end
+  *if* $a > b$ *then*
+    #redbold[$a <- a - b$] #comment[and a comment]
+  *else*
+    #redbold[$b <- b - a$] #comment[and another comment]
+  *end*
+  *goto* @line:loop-start
+  <line:loop-end>
+  *return* $a$
+  ```
+)
+````
+![rawtext](examples/rawtext.png)
+
+It works similar to `pseudocode`, you just don't have to put content brackets in
+every line and you don't need `ind` and `ded`.
+
+Because `pseudocode-raw` relies on Typst's `eval`-feature, you will have to
+explicitly bring into scope any variable or function that you defined yourself
+or additionally loaded from a package.
+In the example above, that is the `redbold` function.
+Making it known to `pseudocode-raw` works using its `scope` keyword argument,
+which accepts a dictionary of variables where the keys are the names that you
+plan to use in the pseudocode and the values are the symbols these refer to in
+the "outside world".
+It is probably best to have identical keys and values, as shown in the example.
+
+The language of the raw block is irrelevant for this feature to work but,
+depending on how your editor is configured, using `typ` will give you proper
+syntax highlighting.
+
+
 ### Algorithm as figure
 `#pseudocode` and friends are great if you just want to show some lines of code.
 If you want to display a full algorithm with bells and whistles, you can use
-`#algorithm`:
+`#algorithm` together with one of the `pseudocode*` functions:
 ```typ
 #algorithm(
   caption: [The Euclidean algorithm],
@@ -182,8 +238,8 @@ However, Lovelace provides a sensible `#comment` function you can use:
 ### Customisation
 Lovelace provides a couple of customisation options.
 
-First, the `pseudocode` and `pseudocode-list` functions accepts optional keyword
-arguments:
+First, the `pseudocode`, `pseudocode-list`, and `pseudocode-raw` functions
+accepts optional keyword arguments:
 - `line-numbering`: `true` or `false`, whether to display line numbers, default
   `true`
 - `line-number-transform`: a function that takes in the line number as an integer
@@ -222,6 +278,7 @@ Also, there are some optional arguments to `lovelace-setup`:
   `#pseudocode` as the latter has an effect on line numbers in references as well.
 - `line-number-supplement`: some content that is placed before the line number
   when referencing it, default `"Line"`
+- `body-inset`: the inset of body, default `(bottom: 5pt)`
 
 If you want to avoid having to repeat all those configurations, here is what
 you can do.
