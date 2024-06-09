@@ -25,6 +25,7 @@
   line-numbering: true,
   line-number-transform: it => it,
   indentation-guide-stroke: none,
+  indentation-size: 1em,
   ..children
 ) = {
   let lines = ()
@@ -33,7 +34,7 @@
   let curr-label = none
   let numbered-line = true
   let indentation-box = box.with(
-    inset: (left: 1em, rest: 0pt),
+    inset: (left: indentation-size, rest: 0pt),
     stroke: (left: indentation-guide-stroke, rest: none)
   )
   let rep-app(fn, init, num) = {
