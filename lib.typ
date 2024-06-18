@@ -16,6 +16,222 @@
   ))
 }
 
+#let line-number-supplement = state("lovelace-line-number-supplement", "Line")
+
+#let normalize-line(line) = {
+  if type(line) == content {
+    (
+      numbered: true,
+      label: none,
+      body: line,
+    )
+  } else if type(line) == dictionary {
+    if ("numbered", "label", "body").all(key => key in line) {
+      line
+    } else {
+      panic("Pseudocode line in form of dictionary has wrong keys.")
+    }
+  } else if type(line) == array {
+    line
+  } else {
+    panic("Pseudocode line must be content or dictionary.")
+  }
+}
+
+#let indent(..children) = children.pos().map(normalize-line)
+
+#let new-no-number(body) = {
+  if type(body) == content {
+    (
+      numbered: false,
+      label: none,
+      body: body,
+    )
+  } else if type(body) == dictionary {
+    body.numbered = false
+    body
+  }
+}
+
+#let new-line-label(label, body) = {
+  if type(body) == content {
+    (
+      numbered: true,
+      label: label,
+      body: body,
+    )
+  } else if type(body) == dictionary {
+    body.label = label
+    body
+  }
+}
+
+#let line-number-figure(number, label) = {
+  counter(figure.where(kind: "lovelace-line-number")).update(number - 1)
+  show: align.with(right + horizon)
+  text(size: .9em, number-width: "tabular")[#number]
+
+  if label != none {
+    box(context[
+      #figure(
+        kind: "lovelace-line-number",
+        supplement: line-number-supplement.get(),
+        [],
+      )
+      #label
+    ])
+  }
+}
+
+#let pseudocode-new-grid(
+  line-numbering: true,
+  indentation-guide-stroke: none,
+  indentation-size: 1em,
+  indentation-guide-inset: .3em,
+  booktabs-stroke: none,
+  title: none,
+  ..children,
+) = {
+  children = children.pos().map(normalize-line)
+
+  let collect-precursors(level, line-number, y, children) = {
+    let precursors = ()
+    for child in children {
+      if type(child) == dictionary {
+        let content-precursor = (
+          level: level,
+          y: y,
+          body: par(
+            hanging-indent: .5em,
+            child.body
+          ),
+          numbered: child.numbered,
+          kind: "content",
+        )
+        precursors.push(content-precursor)
+        if child.numbered {
+          let number-precursor = (
+            y: y,
+            body: line-number-figure(line-number, child.label),
+            kind: "number",
+          )
+          precursors.push(number-precursor)
+
+          line-number += 1
+        }
+
+        y += 1
+      } else if type(child) == array {
+        let nested-precursors = collect-precursors(
+          level + 1,
+          line-number,
+          y,
+          child
+        )
+        let nested-lines = nested-precursors.filter(p => p.kind == "content")
+        let indent-precursor = (
+          level: level,
+          y: y,
+          rowspan: nested-lines.len(),
+          kind: "indent",
+        )
+        precursors.push(indent-precursor)
+        precursors += nested-precursors
+        line-number += nested-lines.filter(p => p.numbered).len()
+        y += nested-lines.len()
+      }
+    }
+
+    precursors
+  }
+
+  let precursors = collect-precursors(0, 1, 0, children)
+  let max-level = precursors.fold(0, (curr-max, prec) => {
+    if "level" in prec {
+      calc.max(curr-max, prec.level)
+    } else {
+      curr-max
+    }
+  })
+  let line-number-correction = if line-numbering { 1 } else { 0 }
+  let title-correction = if title != none { 1 } else { 0 }
+
+  let cells = precursors.map(prec => {
+    if prec.kind == "content" {
+      grid.cell(
+        x: prec.level + line-number-correction,
+        y: prec.y + title-correction,
+        colspan: max-level + 1 - prec.level,
+        rowspan: 1,
+        stroke: none,
+        prec.body,
+      )
+    } else if prec.kind == "number" and line-numbering {
+      grid.cell(
+        x: 0,
+        y: prec.y + title-correction,
+        colspan: 1,
+        rowspan: 1,
+        stroke: none,
+        prec.body,
+      )
+    } else if prec.kind == "indent" {
+      grid.cell(
+        x: prec.level + line-number-correction,
+        y: prec.y + title-correction,
+        colspan: 1,
+        rowspan: prec.rowspan,
+        stroke: (right: indentation-guide-stroke, rest: none),
+        h(indentation-guide-inset),
+      )
+    } else { () }
+  }).flatten()
+
+  let max-y = calc.max(..cells.map(cell => cell.y))
+
+  // precursors
+  // cells
+
+  let title-cells = if title == none {
+    ()
+  } else {
+    (
+      grid.header(
+        grid.cell(
+          x: 0, y: 0,
+          colspan: max-level + 1 + line-number-correction,
+          rowspan: 1,
+          inset: (y: .8em),
+          stroke: (bottom: booktabs-stroke),
+          title
+        ),
+      ),
+    )
+  }
+
+  let booktab-hlines =  (
+    grid.hline(y: 0, stroke: booktabs-stroke),
+    grid.footer(
+      grid.cell(
+        y: max-y + 1,
+        colspan: max-level + 1 + line-number-correction,
+        rowspan: 1,
+        stroke: (top: booktabs-stroke),
+        none
+      ),
+    ),
+  )
+
+  grid(
+    columns: max-level + 1 + line-number-correction,
+    column-gutter: indentation-size - indentation-guide-inset,
+    row-gutter: .8em,
+    ..title-cells,
+    ..cells,
+    ..booktab-hlines,
+  )
+}
+
 #let comment(body) = {
   h(1fr)
   text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
@@ -30,6 +246,7 @@
 ) = {
   let lines = ()
   let indentation = 0
+  let max-indentation = 0
   let line-no = 1
   let curr-label = none
   let numbered-line = true
@@ -91,7 +308,7 @@
   grid(
     columns: columns,
     column-gutter: 1em,
-    row-gutter: .0em,
+    row-gutter: .3em,
     ..cells
   )
 }
