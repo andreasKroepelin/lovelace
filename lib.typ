@@ -16,8 +16,6 @@
   ))
 }
 
-#let line-number-supplement = state("lovelace-line-number-supplement", "Line")
-
 #let normalize-line(line) = {
   if type(line) == content {
     (
@@ -66,30 +64,51 @@
   }
 }
 
-#let line-number-figure(number, label) = {
+#let line-number-figure(number, label, supplement, line-numbering) = {
+  if line-numbering == none { return }
   counter(figure.where(kind: "lovelace-line-number")).update(number - 1)
   show: align.with(right + horizon)
-  text(size: .9em, number-width: "tabular")[#number]
+  text(size: .8em, number-width: "tabular")[#numbering(line-numbering, number)]
 
   if label != none {
-    box(context[
+    box[
       #figure(
         kind: "lovelace-line-number",
-        supplement: line-number-supplement.get(),
-        [],
+        supplement: supplement,
+        numbering: line-numbering,
+        none,
       )
       #label
-    ])
+    ]
+  }
+}
+
+#let half-stroke(s) = {
+  if s == none {
+    none
+  } else if type(s) == stroke {
+    (
+      paint: s.paint,
+      thickness: s.thickness / 2,
+      cap: s.cap,
+      join: s.join,
+      dash: s.dash,
+      miter-limit: s.miter-limit,
+    )
+  } else if type(s) == dictionary {
+    half-stroke(stroke(s))
   }
 }
 
 #let pseudocode-new-grid(
-  line-numbering: true,
-  indentation-guide-stroke: none,
+  line-numbering: "1",
+  line-number-supplement: "Line",
+  indentation-guide-stroke: 1pt + gray,
   indentation-size: 1em,
   indentation-guide-inset: .3em,
   booktabs-stroke: none,
   title: none,
+  numbered-title: none,
   ..children,
 ) = {
   children = children.pos().map(normalize-line)
@@ -99,12 +118,13 @@
     for child in children {
       if type(child) == dictionary {
         let content-precursor = (
-          level: level,
+          x: 2 * level,
           y: y,
-          body: par(
-            hanging-indent: .5em,
+          body: {
+            set par(hanging-indent: .5em)
+            set align(left)
             child.body
-          ),
+          },
           numbered: child.numbered,
           kind: "content",
         )
@@ -112,7 +132,7 @@
         if child.numbered {
           let number-precursor = (
             y: y,
-            body: line-number-figure(line-number, child.label),
+            body: line-number-figure(line-number, child.label, line-number-supplement, line-numbering),
             kind: "number",
           )
           precursors.push(number-precursor)
@@ -130,7 +150,7 @@
         )
         let nested-lines = nested-precursors.filter(p => p.kind == "content")
         let indent-precursor = (
-          level: level,
+          x: 2 * level + 1,
           y: y,
           rowspan: nested-lines.len(),
           kind: "indent",
@@ -146,27 +166,35 @@
   }
 
   let precursors = collect-precursors(0, 1, 0, children)
-  let max-level = precursors.fold(0, (curr-max, prec) => {
-    if "level" in prec {
-      calc.max(curr-max, prec.level)
+  let max-x = precursors.fold(0, (curr-max, prec) => {
+    if "x" in prec {
+      calc.max(curr-max, prec.x)
     } else {
       curr-max
     }
   })
-  let line-number-correction = if line-numbering { 1 } else { 0 }
-  let title-correction = if title != none { 1 } else { 0 }
+
+  if numbered-title != none {
+    title = context {
+      strong([#figure.supplement] + [: ])
+      numbered-title
+    }
+  }
+
+  let line-number-correction = if line-numbering != none { 1 } else { 0 }
+  let title-correction = if title != none { 1 } else { 1 }
 
   let cells = precursors.map(prec => {
     if prec.kind == "content" {
       grid.cell(
-        x: prec.level + line-number-correction,
+        x: prec.x + line-number-correction,
         y: prec.y + title-correction,
-        colspan: max-level + 1 - prec.level,
+        colspan: max-x + 1 - prec.x,
         rowspan: 1,
         stroke: none,
         prec.body,
       )
-    } else if prec.kind == "number" and line-numbering {
+    } else if prec.kind == "number" and line-numbering != none {
       grid.cell(
         x: 0,
         y: prec.y + title-correction,
@@ -177,11 +205,11 @@
       )
     } else if prec.kind == "indent" {
       grid.cell(
-        x: prec.level + line-number-correction,
+        x: prec.x + line-number-correction,
         y: prec.y + title-correction,
         colspan: 1,
         rowspan: prec.rowspan,
-        stroke: (right: indentation-guide-stroke, rest: none),
+        stroke: (left: indentation-guide-stroke, bottom: indentation-guide-stroke, rest: none),
         h(indentation-guide-inset),
       )
     } else { () }
@@ -189,32 +217,29 @@
 
   let max-y = calc.max(..cells.map(cell => cell.y))
 
-  // precursors
+  // return precursors
   // cells
 
-  let title-cells = if title == none {
-    ()
-  } else {
-    (
-      grid.header(
-        grid.cell(
-          x: 0, y: 0,
-          colspan: max-level + 1 + line-number-correction,
-          rowspan: 1,
-          inset: (y: .8em),
-          stroke: (bottom: booktabs-stroke),
-          title
-        ),
-      ),
-    )
-  }
+  let title-cell = grid.header(grid.cell(
+    x: 0, y: 0,
+    colspan: max-x + 1 + line-number-correction,
+    rowspan: 1,
+    inset: if title != none { (y: .8em) } else { 0pt },
+    stroke: if title != none {
+      (bottom: half-stroke(booktabs-stroke))
+    },
+    {
+      set align(left)
+      title
+    }
+  ))
 
   let booktab-hlines =  (
     grid.hline(y: 0, stroke: booktabs-stroke),
     grid.footer(
       grid.cell(
         y: max-y + 1,
-        colspan: max-level + 1 + line-number-correction,
+        colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
         stroke: (top: booktabs-stroke),
         none
@@ -223,151 +248,85 @@
   )
 
   grid(
-    columns: max-level + 1 + line-number-correction,
-    column-gutter: indentation-size - indentation-guide-inset,
+    columns: max-x + 1 + line-number-correction,
+    column-gutter: indentation-size,
+    // column-gutter: indentation-size - indentation-guide-inset,
     row-gutter: .8em,
-    ..title-cells,
+    title-cell,
     ..cells,
     ..booktab-hlines,
   )
 }
+
+
 
 #let comment(body) = {
   h(1fr)
   text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
 }
 
-#let pseudocode(
-  line-numbering: true,
-  line-number-transform: it => it,
-  indentation-guide-stroke: none,
-  indentation-size: 1em,
-  ..children
-) = {
-  let lines = ()
-  let indentation = 0
-  let max-indentation = 0
-  let line-no = 1
-  let curr-label = none
-  let numbered-line = true
-  let indentation-box = box.with(
-    inset: (left: indentation-size, rest: 0pt),
-    stroke: (left: indentation-guide-stroke, rest: none)
-  )
-  let rep-app(fn, init, num) = {
-    let x = init
-    for i in range(num) {
-      x = fn(x)
-    }
-    x
-  }
-
-  for child in children.pos() {
-    if child == ind {
-      indentation += 1
-    } else if child == ded {
-      indentation -= 1
-    } else if child == no-number {
-      numbered-line = false
-    } else if type(child) == label {
-      curr-label = child
-    } else {
-      lines.push((
-        no: if numbered-line and line-numbering {
-          align(right + horizon)[
-            #figure(
-              kind: "lovelace-line-no",
-              supplement: "Line",
-              [#line-number-transform(line-no)]
-            )
-            #curr-label
-          ]
-        },
-        line: rep-app(
-          indentation-box,
-          pad(left: -2pt, rest: 4pt, child),
-          indentation
-        )
-      ))
-      if numbered-line {
-        line-no += 1
-      }
-      curr-label = none
-      numbered-line = true
-    }
-  }
-
-  set par(hanging-indent: .5em)
-  let columns = if line-numbering { 2 } else { 1 }
-  let cells = if line-numbering {
-    lines.map(line => ( line.no, line.line ) ).flatten()
-  } else {
-    lines.map(line => line.line)
-  }
-  
-  grid(
-    columns: columns,
-    column-gutter: 1em,
-    row-gutter: .3em,
-    ..cells
+#let is-not-empty(it) = {
+  return type(it) != content or not (
+    it.fields() == (:) or
+    (it.has("children") and it.children == ()) or
+    (it.has("children") and it.children.all(c => not is-not-empty(c))) or
+    (it.has("text") and it.text.match(regex("^\\s*$")) != none)
   )
 }
 
-#let pseudocode-list(..config, body) = {
-  let is-not-empty(it) = {
-    return type(it) != content or not (
-      it.fields() == (:) or
-      (it.has("children") and it.children == ()) or
-      (it.has("children") and it.children.all(c => not is-not-empty(c))) or
-      (it.has("text") and it.text.match(regex("^\\s*$")) != none)
-    )
+#let unwrap-singleton(a) = {
+  while type(a) == array and a.len() == 1 {
+    a = a.first()
   }
+  a
+}
 
-  let transform-list(it) = {
+#let pseudocode-list(..config, body) = {
+  let transform-list(it, numbered) = {
     if not it.has("children") {
-      return it
+      if numbered {
+        return (it, )
+      } else {
+        return (new-no-number(it), )
+      }
     }
-
     let transformed = ()
-    let current-normal-child = []
+    let non-item-child = []
+    let non-item-label = none
+    let items = ()
     for child in it.children {
-      if child.func() in (enum.item, list.item) {
-        if is-not-empty(current-normal-child) {
-          transformed.push(current-normal-child)
-          current-normal-child = []
-        }
-        transformed.push(ind)
-        if child.func() == list.item {
-          transformed.push(no-number)
-        }
-        transformed.push(transform-list(child.body))
-        transformed.push(ded)
+      let f = child.func()
+      if f in (enum.item, list.item) {
+        items += transform-list(child.body, f == enum.item)
       } else if (
         child.func() == metadata and
         child.value.at("identifier", default: "") == "lovelace line label" and
         "label" in child.value
       ) {
-        transformed.push(child.value.label)
+        non-item-label = child.value.label
       } else {
-        current-normal-child += child
+        non-item-child += child
       }
     }
-    if is-not-empty(current-normal-child) {
-      transformed.push(current-normal-child)
-    }
 
+    if is-not-empty(non-item-child) {
+      if numbered {
+        transformed.push(new-line-label(non-item-label, non-item-child))
+      } else {
+        transformed.push(new-no-number(non-item-child))
+      }
+    }
+    if items.len() > 0 {
+      transformed.push(indent(..items))
+    }
     transformed
   }
 
-  let transformed = transform-list(body)
-  let cleaned = transformed.flatten().filter(is-not-empty)
-  let dedented = cleaned
-  while dedented.first() == ind and dedented.last() == ded {
-    dedented = dedented.slice(1, -1)
-  }
-
-  pseudocode(..config.named(), ..dedented)
+  let transformed = unwrap-singleton(transform-list(body, false))
+  // transformed.map(normalize-line)
+  pseudocode-new-grid(..config.named(), ..transformed)
 }
+
 
 #let pseudocode-raw(typst-code, ..config, scope: (:)) = {
   assert.eq(type(typst-code), content)

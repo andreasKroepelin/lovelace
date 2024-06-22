@@ -70,7 +70,7 @@ The line number starts counting from @line:test again in @the-algo.
   // line-numbering: false,
   indentation-guide-stroke: 1pt + teal,
   title: lorem(30),
-  booktabs-stroke: 2pt + navy,
+  // booktabs-stroke: 2pt + black,
   [abc],
   [def],
   indent(
@@ -92,7 +92,29 @@ The line number starts counting from @line:test again in @the-algo.
     [#lorem(10)],
   ),
   [g],
-  ..(([hallo], ) * 30)
+  ..(([hallo], ) * 20)
 )
 
-See @abc for details.
+// See @abc for details.
+
+
+#figure(
+  kind: "algorithm",
+  supplement: [Algorithm],
+  caption: [hallo],
+  pseudocode-new-grid(
+    title: [Local search],
+    booktabs-stroke: 2pt + black,
+    [abc], [def],
+    [abc], [def],
+    indent([abc], [def],),
+    [abc], [#lorem(30)],
+  )
+)
+
+#repr[
+  - abc
+  + def
+    + hij
+]
+
