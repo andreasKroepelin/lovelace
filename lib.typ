@@ -1,6 +1,3 @@
-#let ind = metadata("lovelace indent")
-#let ded = metadata("lovelace dedent")
-#let no-number = metadata("lovelace no number")
 #let line-label(it) = {
   if type(it) == str {
     it = label(it)
@@ -38,7 +35,7 @@
 
 #let indent(..children) = children.pos().map(normalize-line)
 
-#let new-no-number(body) = {
+#let no-number(body) = {
   if type(body) == content {
     (
       numbered: false,
@@ -51,7 +48,7 @@
   }
 }
 
-#let new-line-label(label, body) = {
+#let with-line-label(label, body) = {
   if type(body) == content {
     (
       numbered: true,
@@ -100,13 +97,23 @@
   }
 }
 
-#let pseudocode-new-grid(
+#let identify-algorithm = context {
+  let algos = query(figure.where(kind: "algorithm").before(here()))
+  if algos.len() > 0 {
+    let algo = algos.last()
+    
+    [#algo.supplement #algo.counter.display(algo.numbering)]
+  }
+}
+
+#let pseudocode(
   line-numbering: "1",
   line-number-supplement: "Line",
-  indentation-guide-stroke: 1pt + gray,
-  indentation-size: 1em,
-  indentation-guide-inset: .3em,
-  booktabs-stroke: none,
+  stroke: 1pt + gray,
+  indentation: 1em,
+  hooks: 0pt,
+  booktabs-stroke: black + 2pt,
+  booktabs: false,
   title: none,
   numbered-title: none,
   ..children,
@@ -132,7 +139,12 @@
         if child.numbered {
           let number-precursor = (
             y: y,
-            body: line-number-figure(line-number, child.label, line-number-supplement, line-numbering),
+            body: line-number-figure(
+              line-number,
+              child.label,
+              line-number-supplement,
+              line-numbering
+            ),
             kind: "number",
           )
           precursors.push(number-precursor)
@@ -175,10 +187,15 @@
   })
 
   if numbered-title != none {
-    title = context {
-      strong([#figure.supplement] + [: ])
-      numbered-title
+    if numbered-title == [] {
+      title = [*#identify-algorithm.*]
+    } else {
+      title = [*#identify-algorithm:* #numbered-title]
     }
+  }
+
+  if not booktabs {
+    booktabs-stroke = none
   }
 
   let line-number-correction = if line-numbering != none { 1 } else { 0 }
@@ -209,16 +226,13 @@
         y: prec.y + title-correction,
         colspan: 1,
         rowspan: prec.rowspan,
-        stroke: (left: indentation-guide-stroke, bottom: indentation-guide-stroke, rest: none),
-        h(indentation-guide-inset),
+        stroke: (left: stroke, bottom: stroke, rest: none),
+        h(hooks),
       )
     } else { () }
   }).flatten()
 
   let max-y = calc.max(..cells.map(cell => cell.y))
-
-  // return precursors
-  // cells
 
   let title-cell = grid.header(grid.cell(
     x: 0, y: 0,
@@ -249,8 +263,7 @@
 
   grid(
     columns: max-x + 1 + line-number-correction,
-    column-gutter: indentation-size,
-    // column-gutter: indentation-size - indentation-guide-inset,
+    column-gutter: indentation / 2,
     row-gutter: .8em,
     title-cell,
     ..cells,
@@ -323,104 +336,6 @@
   }
 
   let transformed = unwrap-singleton(transform-list(body, false))
-  // transformed.map(normalize-line)
   pseudocode-new-grid(..config.named(), ..transformed)
 }
 
-
-#let pseudocode-raw(typst-code, ..config, scope: (:)) = {
-  assert.eq(type(typst-code), content)
-  assert.eq(typst-code.func(), raw)
-
-  let indent = 0
-  let last-indent = 0
-  let res = ()
-  for line in typst-code.text.split("\n") {
-    let whitespaces = line.find(regex("^\\s+"))
-    let current-indent = if whitespaces != none { whitespaces.len() } else { 0 }
-    if indent == 0 and current-indent != 0 {
-      indent = current-indent
-    }
-    if current-indent > last-indent {
-      res += (ind,) * int((current-indent - last-indent) / indent)
-    } else if current-indent < last-indent {
-      res += (ded,) * int((last-indent - current-indent) / indent)
-    }
-    last-indent = current-indent
-    let line-code = line.slice(current-indent)
-    let match = line-code.match(regex("^<(.*)>\\s*$"))
-    if (match != none) {
-      res.push(label(match.captures.at(0)))
-    } else {
-      res.push(eval(line-code, mode: "markup", scope: (no-number: no-number, comment: comment) + scope))
-    }
-  }
-  pseudocode(..config.named(), ..res)
-}
-
-
-#let algorithm = figure.with(kind: "lovelace", supplement: "Algorithm")
-
-#let setup-lovelace(
-  line-number-style: text.with(size: .7em),
-  line-number-supplement: "Line",
-  body-inset: (bottom: 5pt),
-  body
-) = {
-  show ref: it => if (
-    it.element != none and
-    it.element.func() == figure and
-    it.element.kind == "lovelace-line-no"
-  ) {
-    link(
-      it.element.location(),
-      { line-number-supplement; sym.space; it.element.body }
-    )
-  } else {
-    it
-  }
-  show figure.where(kind: "lovelace-line-no"): it => line-number-style(it.body)
-  show figure.where(kind: "lovelace"): it => {
-    let booktabbed = block(
-      stroke: (y: 1.3pt),
-      inset: 0pt,
-      breakable: true,
-      width: 100%,
-      {
-        set align(left)
-        block(
-          inset: (y: 5pt),
-          width: 100%,
-          stroke: (bottom: .8pt),
-          {
-            strong({
-              it.supplement
-              sym.space.nobreak
-              counter(figure.where(kind: "lovelace")).display(it.numbering)
-              if it.caption != none {
-                [: ]
-              } else {
-                [.]
-              }
-            })
-            if it.caption != none {it.caption.body}
-          }
-
-        )
-        block(
-          inset: body-inset,
-          breakable: true,
-          it.body
-        )
-      }
-    )
-    let centered = pad(x: 5%, booktabbed)
-    if it.placement in (auto, top, bottom) {
-      place(it.placement, float: true, centered)
-    } else {
-      centered
-    }
-  }
-
-  body
-}
