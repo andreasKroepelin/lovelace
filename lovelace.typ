@@ -235,21 +235,29 @@
 
   let max-y = cells.fold(0, (curr-max, cell) => calc.max(curr-max, cell.y))
 
-  let title-cell = grid.header(grid.cell(
-    x: 0, y: 0,
-    colspan: max-x + 1 + line-number-correction,
-    rowspan: 1,
-    inset: if title != none { (y: .8em) } else { 0pt },
-    stroke: if title != none {
-      (bottom: half-stroke(booktabs-stroke))
-    },
-    align: left,
-    title
-  ))
-
-  let booktab-hlines =  (
-    grid.hline(y: 0, stroke: booktabs-stroke),
+  let decoration = (
+    grid.header(
+      grid.cell(
+        x: 0, y: 0,
+        colspan: max-x + 1 + line-number-correction,
+        rowspan: 1,
+        inset: if title != none { (y: .8em) } else { 0pt },
+        stroke: if title == none {
+          (
+            top: booktabs-stroke,
+          )
+        } else {
+          (
+            top: booktabs-stroke,
+            bottom: half-stroke(booktabs-stroke),
+          )
+        },
+        align: left,
+        title
+      ),
+    ),
     grid.footer(
+      repeat: false,
       grid.cell(
         y: max-y + 1,
         colspan: max-x + 1 + line-number-correction,
@@ -264,9 +272,8 @@
     columns: max-x + 1 + line-number-correction,
     column-gutter: indentation / 2,
     row-gutter: line-gap,
-    title-cell,
     ..cells,
-    ..booktab-hlines,
+    ..decoration,
   )
 }
 
