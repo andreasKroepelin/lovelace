@@ -243,10 +243,8 @@
     stroke: if title != none {
       (bottom: half-stroke(booktabs-stroke))
     },
-    {
-      set align(left)
-      title
-    }
+    align: left,
+    title
   ))
 
   let booktab-hlines =  (
@@ -273,11 +271,6 @@
 }
 
 
-
-#let comment(body) = {
-  h(1fr)
-  text(size: .7em, fill: gray, sym.triangle.stroked.r + sym.space + body)
-}
 
 #let is-not-empty(it) = {
   return type(it) != content or not (
@@ -341,6 +334,5 @@
     transformed = (transformed, )
   }
   pseudocode(..config.named(), ..transformed)
-  // transformed
 }
 
