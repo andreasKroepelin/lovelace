@@ -20,4 +20,6 @@
       + *end*
     + *end*
   ]
-)
+) <cool>
+
+See @cool for details on how to do something cool.
