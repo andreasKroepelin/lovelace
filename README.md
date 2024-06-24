@@ -426,7 +426,9 @@ section), there is the option `numbered-title`:
       + *end*
     + *end*
   ]
-)
+) <cool>
+
+See @cool for details on how to do something cool.
 ```
 
 ![figure-title](examples/figure-title.svg)
