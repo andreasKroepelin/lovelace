@@ -30,6 +30,7 @@ Main features include:
 - [Decorations](#decorations)
 - [Algorithm as figure](#algorithm-as-figure)
 - [Customisation overview](#customisation-overview)
+- [Exported functions](#exported-functions)
 
 ### Getting started
 
@@ -470,4 +471,25 @@ In this case, you would put the following at the top of your document:
 #let pseudocode = pseudocode.with(..my-lovelace-defaults)
 #let pseudocode-list = pseudocode-list.with(..my-lovelace-defaults)
 ```
+
+### Exported functions
+
+Lovelace exports the following functions:
+
+* `pseudocode`: Typeset pseudocode with each line as an individual content
+  argument, see [here](#lower-level-interface) for details.
+  Has [these](#customisation-overview) optional arguments.
+* `pseudocode-list`: Takes a standard Typst list and transforms it into a
+  pseudocode.
+  Has [these](#customisation-overview) optional arguments.
+* `indent`: Inside the argument list of `pseudocode`, use `indent` to specify
+  an indented block, see [here](#lower-level-interface) for details.
+* `no-number`: Wrap an argument to `pseudocode` in this function to have the
+  corresponding line be unnumbered, see [here](#line-numbers) for details.
+* `with-line-label`: Use this function in the `pseudocode` arguments to add
+  a label to a specific line, see [here](#referencing-lines) for details.
+* `line-label`: When using `pseudocode-list`, you do *not* use `with-line-label`
+  but insert a call to `line-label` somewhere in a line to add a label, see
+  [here](#referencing-lines) for details.
+
 
