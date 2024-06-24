@@ -8,301 +8,464 @@ It is named after the computer science pioneer
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/andreasKroepelin/lovelace)
 ![GitHub Repo stars](https://img.shields.io/github/stars/andreasKroepelin/lovelace)
 
+Pseudocode is not a programming language, it doesn't have strict syntax, so
+you should be able to write it however you need to in your specific situation.
+Lovelace lets you do exactly that.
+
 Main features include:
 - arbitrary keywords and syntax structures
-- multiple interfaces for typesetting pseudocode
-- optional line numbering (configurable per line)
+- optional line numbering
 - line labels
-- customisable indentation guides
-- custom figure kind
+- lots of customisation with sensible defaults
 
 
 ## Usage
+
+- [Getting started](#getting-started)
+- [Lower level interface](#lower-level-interface)
+- [Line numbers](#line-numbers)
+- [Referencing lines](#referencing-lines)
+- [Indentation guides](#indentation-guides)
+- [Spacing](#spacing)
+- [Decorations](#decorations)
+- [Algorithm as figure](#algorithm-as-figure)
+- [Customisation overview](#customisation-overview)
+
+### Getting started
+
 Import the package using
 ```typ
-#import "@preview/lovelace:0.2.0": *
+#import "@preview/lovelace:0.3.0": *
 ```
-You should then call the setup function in a show rule _at the top of your
-document_:
+
+The simplest usage is via `pseudocode-list` which transforms a nested list
+into pseudocode:
 ```typ
-#show: setup-lovelace
-```
-You are then ready to go to typeset some pseudocode:
-```typ
-#pseudocode(
-  no-number,
-  [*input:* integers $a$ and $b$],
-  no-number,
-  [*output:* greatest common divisor of $a$ and $b$],
-  [*while* $a != b$ *do*], ind,
-    [*if* $a > b$ *then*], ind,
-      $a <- a - b$, ded,
-    [*else*], ind,
-      $b <- b - a$, ded,
-    [*end*], ded,
-  [*end*],
-  [*return* $a$]
-)
+#pseudocode-list[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
 ```
 resulting in:
 
-![euclid](examples/euclid.png)
+![simple](examples/simple.svg)
 
-As you can see, every line of your pseudocode is represented by a single content
-argument.
-(If you don't like this syntax, consider one of the [alternatives](#alternative-input-methods).)
-Additionally, we use `ind` and `ded` to control the indentation level:
-`ind` (indent) to go one level deeper, `ded` (dedent) to go one level back.
-Don't forget to put all the commas in between!
-The content of your pseudocode is up to you.
-This package does not assume any specific set of keywords or language constructs.
-For example, you might want to write something like
-```typ
-#pseudocode(
-  $x <- a$,
-  [*repeat until convergence*], ind,
-    $x <- (x + a/x) / 2$, ded,
-  [*return* $x$]
-)
-```
-![custom-keywords](examples/custom-keywords.png)
+As you can see, every list item becomes one line of code and nested lists become
+indented blocks.
+There are no special commands for common keywords and control structures, you
+just use whatever you like.
 
-for some more abstract, less implementation concerned pseudocode that follows
-your own convention, most suitable to you.
+Maybe in your domain very uncommon structures make more sense?
+No problem!
 
-There are two other elements you can use as positional arguments to `#pseudocode`:
-`no-number` makes the next line have no line number (and also not being counted).
-This is useful for things like input and output (as seen above) or to introduce
-an empty line (i.e, you add `no-number, []` to the arguments).
-
-### Referencing lines
-Finally, you can put labels there.
-They will be attached to the line number of the following line and can be used
-to reference that line later:
-```typ
-#pseudocode(
-  <line:eat>,
-  [Eat],
-  [Train],
-  <line:sleep>,
-  [Sleep],
-  [*goto* @line:eat]
-)
-
-@line:sleep is of particular importance.
-```
-![goto](examples/goto.png)
-
-### Alternative input methods
-The main challenge for representing pseudocode in Typst is how to express
-indentations.
-As seen above, the standard way in Lovelace is to use `ind` and `ded`.
-However, there are two occasions where Typst already respects indentation:
-- enumerations/lists
-- raw text
-
-Besides `#pseudocode`, there are therefore two other options to specify
-pseudocode with Lovelace.
-
-#### Pseudocode as an enumeration/list
-Using the function `pseudocode-list`, you can type your code using Typst's enumerations and bullet point lists:
 ```typ
 #pseudocode-list[
-  - *input:* integers $a$ and $b$
-  - *output:* greatest common divisor of $a$ and $b$
-  + *while* $a != b$ *do*
-    + *if* $a > b$ *then*
-      + $a <- a - b$
-    + *else*
-      + $b <- b - a$
+  + *in parallel for each* $i = 1, ..., n$ *do*
+    + fetch chunk of data $i$
+    + *with probability* $exp(-epsilon_i slash k T)$ *do*
+      + perform update
     + *end*
   + *end*
-  + *return* $a$
 ]
 ```
-![list](examples/list.png)
 
-As you can see, each enumeration item (starting with a `+`) becomes a numbered line and each list item (starting with a `-`) becomes a line without a number.
-We also don't need to use `ind` and `ded` as Typst detects the indentation level of the list/enumeration.
+![custom](examples/custom.svg)
 
-If you want to attach a label to a line, you can use the function `#line-label`:
+### Lower level interface
+
+If you feel uncomfortable with abusing Typst's lists like we do here, you can
+also use the `pseudocode` function directly:
+
+```typ
+#pseudocode(
+  [do something],
+  [do something else],
+  [*while* still something to do],
+  indent(
+    [do even more],
+    [*if* not done yet *then*],
+    indent(
+      [wait a bit],
+      [resume working],
+    ),
+    [*else*],
+    indent(
+      [go home],
+    ),
+    [*end*],
+  ),
+  [*end*],
+)
+```
+This is equivalent to the first example.
+Note that each line is given as one content argument and you indent a block by
+using the `indent` function.
+
+This approach has the advantage that you do not rely on significant whitespace
+and code formatters can automatically correctly indent your Typst code.
+
+
+### Line numbers
+
+Lovelace puts a number in front of each line by default.
+If you want no numbers at all, you can set the `line-numbering` option to
+`none`.
+The initial example then looks like this:
+```typ
+#pseudocode-list(line-numbering: none)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![no-number](examples/simple-no-numbers.svg)
+
+(You can also pass this keyword argument to `pseudocode`.)
+
+If you do want line numbers in general but need to turn them off for specific
+lines, you can use `-` items instead of `+` items in `pseudocode-list`:
 ```typ
 #pseudocode-list[
-  - *input:* number $n in NN$
-  - *output:* zero
-  + *while* $n > 0$
-    + $n <- n - 1$ #line-label(<line:decr>)
+  + normal line with a number
+  - this line has no number
+  + this one has a number again
+]
+```
+
+![number-no-number](examples/number-no-number.svg)
+
+It's easy to remember:
+`-` items usually produce unnumbered lists and `+` items produce numbered lists!
+
+When using the `pseudocode` function, you can achieve the same using
+`no-number`:
+```typ
+#pseudocode(
+  [normal line with a number],
+  no-number[this line has no number],
+  [this one has a number again],
+)
+```
+
+#### More line number customisation
+
+Other than `none`, you can assign anything listed
+[here](https://typst.app/docs/reference/model/numbering/#parameters-numbering)
+to `line-numbering`.
+
+So maybe you happen to think about the Roman Empire a lot and want to reflect
+that in your pseudocode?
+```typ
+#set text(font: "Cinzel")
+
+#pseudocode-list(line-numbering: "I:")[
+  + explore European tribes
+  + *while* not all tribes conquered
+    + *for each* tribe *in* unconquered tribes
+      + try to conquer tribe
+    + *end*
   + *end*
-  + *return* $n$
+]
+```
+
+![roman](examples/roman.svg)
+
+
+### Referencing lines
+
+You can reference inividual lines of a pseudocode by giving it a label.
+Inside `pseudocode-list`, you can use `line-label`:
+
+```typ
+#pseudocode-list[
+  + #line-label(<start>) do something
+  + #line-label(<important>) do something important
+  + go back to @start
 ]
 
-In @line:decr, we decrease $n$.
-
+The relevance of the step in @important cannot be overstated.
 ```
-![list label](examples/list-label.png)
 
-#### Pseudocode as raw text
-You can also use raw text syntax in Typst to input pseudocode by using the
-function `pseudocode-raw`:
+![label](examples/label.svg)
 
-````typ
-#let redbold = text.with(fill: red, weight: "bold")
-
-#pseudocode-raw(
-  scope: (redbold: redbold),
-  ```typ
-  #no-number
-  *input:* integers $a$ and $b$
-  #no-number
-  *output:* greatest common divisor of $a$ and $b$
-  <line:loop-start>
-  *if* $a == b$ *goto* @line:loop-end
-  *if* $a > b$ *then*
-    #redbold[$a <- a - b$] #comment[and a comment]
-  *else*
-    #redbold[$b <- b - a$] #comment[and another comment]
-  *end*
-  *goto* @line:loop-start
-  <line:loop-end>
-  *return* $a$
-  ```
+When using `pseudocode`, you can use `with-line-label`:
+```typ
+#pseudocode(
+  with-line-label(<start>)[do something],
+  with-line-label(<important>)[do something important],
+  [go back to @start],
 )
-````
-![rawtext](examples/rawtext.png)
 
-It works similar to `pseudocode`, you just don't have to put content brackets in
-every line and you don't need `ind` and `ded`.
+The relevance of the step in @important cannot be overstated.
+```
+This has the same effect as the previous example.
 
-Because `pseudocode-raw` relies on Typst's `eval`-feature, you will have to
-explicitly bring into scope any variable or function that you defined yourself
-or additionally loaded from a package.
-In the example above, that is the `redbold` function.
-Making it known to `pseudocode-raw` works using its `scope` keyword argument,
-which accepts a dictionary of variables where the keys are the names that you
-plan to use in the pseudocode and the values are the symbols these refer to in
-the "outside world".
-It is probably best to have identical keys and values, as shown in the example.
+The number shown in the reference uses the numbering scheme defined in the
+`line-numbering` option (see previous section).
 
-The language of the raw block is irrelevant for this feature to work but,
-depending on how your editor is configured, using `typ` will give you proper
-syntax highlighting.
+By default, `"Line"` is used as the supplement for referencing lines.
+You can change that using the `line-number-supplement` option to `pseudocode`
+or `pseudocode-list`.
+
+
+### Indentation guides
+
+By default, Lovelace puts a thin gray (`gray + 1pt`) line to the left of each
+indented block, which guides the reader in understanding the indentations, just
+like a code editor would.
+You can customise this using the `stroke` option which takes any value that is
+a valid [Typst stroke](https://typst.app/docs/reference/visualize/stroke/).
+You can especially set it to `none` to have no indentation guides.
+
+The example from the beginning becomes:
+```typ
+#pseudocode-list(stroke: none)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![no-stroke](examples/simple-no-stroke.svg)
+
+#### End blocks with hooks
+
+Some people prefer using the indentation guide to signal the end of a block
+instead of writing something like "**end**" by having a small "hook" at the end.
+To achieve that in Lovelace, you can make use of the `hook` option and specify
+how far a line should extend to the right from the indentation guide:
+```typ
+#pseudocode-list(hooks: .5em)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+]
+```
+
+![hooks](examples/hooks.svg)
+
+
+### Spacing
+
+You can control how far indented lines are shifted left by the `indentation`
+option.
+To change the space between lines, use the `line-gap` option.
+```typ
+#pseudocode-list(indentation: 3em, line-gap: 1.5em)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![spacing](examples/spacing.svg)
+
+
+### Decorations
+
+You can also add a title and/or a frame around your algorithm if you like:
+
+#### Title
+
+Using the `title` option, you can give your pseudocode a title (surprise!).
+For example, to achieve
+[CLRS style](https://en.wikipedia.org/wiki/Introduction_to_Algorithms),
+you can do something like
+```typ
+#pseudocode-list(stroke: none, title: smallcaps[Fancy-Algorithm])[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![title](examples/title.svg)
+
+#### Booktabs
+
+If you like wrapping your algorithm in elegant horizontal lines, you can do so
+by setting the `booktabs` option to `true`.
+```typ
+#pseudocode-list(booktabs: true)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![booktabs](examples/booktabs.svg)
+
+Together with the `title` option, you can produce
+```typ
+#pseudocode-list(booktabs: true, title: [My cool title])[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![booktabs-title](examples/booktabs-title.svg)
+
+By default, the outer booktab strokes are `black + 2pt`.
+You can change that with the option `booktabs-stroke` to any valid
+[Typst stroke](https://typst.app/docs/reference/visualize/stroke/).
+The inner line will always have the same stroke as the outer ones, just with
+half the thickness.
+
 
 
 ### Algorithm as figure
-`#pseudocode` and friends are great if you just want to show some lines of code.
-If you want to display a full algorithm with bells and whistles, you can use
-`#algorithm` together with one of the `pseudocode*` functions:
+
+To make algorithms referencable and being able to float in the document,
+you can use Typst's `figure` function with a custom `kind`.
 ```typ
-#algorithm(
-  caption: [The Euclidean algorithm],
-  pseudocode(
-    no-number,
-    [*input:* integers $a$ and $b$],
-    no-number,
-    [*output:* greatest common divisor of $a$ and $b$],
-    [*while* $a != b$ *do*], ind,
-      [*if* $a > b$ *then*], ind,
-        $a <- a - b$, ded,
-      [*else*], ind,
-        $b <- b - a$, ded,
-      [*end*], ded,
-    [*end*],
-    [*return* $a$]
-  )
-)
-```
-resulting in:
+#figure(
+  kind: "algorithm",
+  supplement: [Algorithm],
+  caption: [My cool algorithm],
 
-![euclid-algorithm](examples/euclid-algorithm.png)
-
-`#algorithm` creates a figure with `kind: "lovelace"` so it gets its own counter
-and display.
-You can use optional arguments such as `placement` or `caption`, see
-[figure in the Typst docs](https://typst.app/docs/reference/meta/figure/#parameters).
-Note that such figures are only displayed correctly when you used the setup
-function mentioned above!
-
-### Comments
-Again, the content of your pseudocode is completely up to you, and that includes
-comments.
-However, Lovelace provides a sensible `#comment` function you can use:
-```typ
-#pseudocode(
-  [A statement #comment[and a comment]],
-  [Another statement #comment[and another comment]],
-)
-```
-![comment](examples/comment.png)
-
-
-### Customisation
-Lovelace provides a couple of customisation options.
-
-First, the `pseudocode`, `pseudocode-list`, and `pseudocode-raw` functions
-accepts optional keyword arguments:
-- `line-numbering`: `true` or `false`, whether to display line numbers, default
-  `true`
-- `line-number-transform`: a function that takes in the line number as an integer
-  and returns an arbitrary value that will be displayed instead of the line
-  number, default `num => num` (identity function)
-- `indentation-guide-stroke`: a
-  [stroke](https://typst.app/docs/reference/visualize/line/#parameters-stroke),
-  defining how the indentation guides are displayed, default `none` (no lines)
-
-For example, let's use thin blue indentation guides and roman line numbering:
-```typ
-#pseudocode-list(
-  line-number-transform: num => numbering("i", num),
-  indentation-guide-stroke: .5pt + aqua,
-)[
-  - *input:* integers $a$ and $b$
-  - *output:* greatest common divisor of $a$ and $b$
-  + *while* $a != b$ *do*
-    + *if* $a > b$ *then*
-      + $a <- a - b$
-    + *else*
-      + $b <- b - a$
+  pseudocode-list[
+    + do something
+    + do something else
+    + *while* still something to do
+      + do even more
+      + *if* not done yet *then*
+        + wait a bit
+        + resume working
+      + *else*
+        + go home
+      + *end*
     + *end*
-  + *end*
-  + *return* $a$
-]
+  ]
+)
 ```
-resulting in:
 
-![euclid-modified](examples/euclid-modified.png)
+![figure](examples/figure.svg)
 
-Also, there are some optional arguments to `lovelace-setup`:
-- `line-number-style`: a function that takes content and returns content, used
-  to display the line numbers in the pseudocode, default `text.with(size: .7em)`,
-  note that this is different from the `line-number-transform` argument to
-  `#pseudocode` as the latter has an effect on line numbers in references as well.
-- `line-number-supplement`: some content that is placed before the line number
-  when referencing it, default `"Line"`
-- `body-inset`: the inset of body, default `(bottom: 5pt)`
-
-If you want to avoid having to repeat all those configurations, here is what
-you can do.
-Suppose, we always want German supplements (Zeile and Algorithmus instead of
-Line and Algorithm) and thin indentation guides.
+If you want to have the algorithm counter inside the title instead (see previous
+section), there is the option `numbered-title`:
 ```typ
-#show: setup-lovelace.with(line-number-supplement: "Zeile")
-#let pseudocode = pseudocode.with(indentation-guide-stroke: .5pt)
-#let algorithm = algorithm.with(supplement: "Algorithmus")
+#figure(
+  kind: "algorithm",
+  supplement: [Algorithm],
 
-#algorithm(
-  caption: [Spurwechsel nach links auf der Autobahn],
-  pseudocode(
-    <line:blinken>,
-    [Links blinken],
-    [In den linken Außenspiegel schauen],
-    [Schulterblick],
-    [*wenn* niemand nähert sich auf der linken Spur, *dann*], ind,
-      [Spur wechseln], ded,
-    [Blinker aus],
-  )
+  pseudocode-list(booktabs: true, numbered-title: [My cool algorithm])[
+    + do something
+    + do something else
+    + *while* still something to do
+      + do even more
+      + *if* not done yet *then*
+        + wait a bit
+        + resume working
+      + *else*
+        + go home
+      + *end*
+    + *end*
+  ]
+)
+```
+
+![figure-title](examples/figure-title.svg)
+
+Note that the `numbered-title` option only makes sense when nesting your
+pseudocode inside a figure with `kind: "algorithm"`, otherwise it produces
+undefined results.
+
+### Customisation overview
+
+Both `pseudocode` and `pseudocode-list` accept the following configuration
+arguments:
+
+**option** | **type** | **default**
+--- | --- | ---
+[`line-numbering`](#line-numbers) | `none` or a [numbering](https://typst.app/docs/reference/model/numbering/#parameters-numbering) | `"1"`
+[`line-number-supplement`](#more-line-number-customisation) | content | `"Line"`
+[`stroke`](#indentation-guides) | stroke | `1pt + gray`
+[`hooks`](#end-blocks-with-hooks) | length | `0pt`
+[`indentation`](#spacing) | length | `1em`
+[`line-gap`](#spacing) | length | `.8em`
+[`booktabs`](#booktabs) | bool | `false`
+[`booktabs-stroke`](#booktabs) | stroke | `2pt + black`
+[`title`](#title) | content or `none` | `none`
+[`numbered-title`](#algorithm-as-figure) | content or `none` | `none`
+
+Until Typst supports user defined types, we can use the following trick when
+wanting to set own default values for these options.
+Say, you always want your algorithms to have colons after the line numbers,
+no indentation guides and, if present, blue booktabs.
+In this case, you would put the following at the top of your document:
+```typ
+#let my-lovelace-defaults = (
+  line-numbering: "1:",
+  stroke: none,
+  booktabs-stroke: 2pt + blue,
 )
 
-Der Schritt in @line:blinken stellt offenbar für viele Verkehrsteilnehmer eine
-Herausforderung dar.
+#let pseudocode = pseudocode.with(..my-lovelace-defaults)
+#let pseudocode-list = pseudocode-list.with(..my-lovelace-defaults)
 ```
-![autobahn](examples/autobahn.png)
+

@@ -112,6 +112,7 @@
   stroke: 1pt + gray,
   indentation: 1em,
   hooks: 0pt,
+  line-gap: .8em,
   booktabs-stroke: black + 2pt,
   booktabs: false,
   title: none,
@@ -188,7 +189,7 @@
 
   if numbered-title != none {
     if numbered-title == [] {
-      title = [*#identify-algorithm.*]
+      title = strong(identify-algorithm)
     } else {
       title = [*#identify-algorithm:* #numbered-title]
     }
@@ -232,7 +233,7 @@
     } else { () }
   }).flatten()
 
-  let max-y = calc.max(..cells.map(cell => cell.y))
+  let max-y = cells.fold(0, (curr-max, cell) => calc.max(curr-max, cell.y))
 
   let title-cell = grid.header(grid.cell(
     x: 0, y: 0,
@@ -264,7 +265,7 @@
   grid(
     columns: max-x + 1 + line-number-correction,
     column-gutter: indentation / 2,
-    row-gutter: .8em,
+    row-gutter: line-gap,
     title-cell,
     ..cells,
     ..booktab-hlines,
@@ -300,7 +301,7 @@
       if numbered {
         return (it, )
       } else {
-        return (new-no-number(it), )
+        return (no-number(it), )
       }
     }
     let transformed = ()
@@ -324,9 +325,9 @@
 
     if is-not-empty(non-item-child) {
       if numbered {
-        transformed.push(new-line-label(non-item-label, non-item-child))
+        transformed.push(with-line-label(non-item-label, non-item-child))
       } else {
-        transformed.push(new-no-number(non-item-child))
+        transformed.push(no-number(non-item-child))
       }
     }
     if items.len() > 0 {
@@ -336,6 +337,10 @@
   }
 
   let transformed = unwrap-singleton(transform-list(body, false))
-  pseudocode-new-grid(..config.named(), ..transformed)
+  if type(transformed) != array {
+    transformed = (transformed, )
+  }
+  pseudocode(..config.named(), ..transformed)
+  // transformed
 }
 
