@@ -191,7 +191,7 @@ that in your pseudocode?
 
 ### Referencing lines
 
-You can reference inividual lines of a pseudocode by giving it a label.
+You can reference an inividual line of a pseudocode by giving it a label.
 Inside `pseudocode-list`, you can use `line-label`:
 
 ```typ
@@ -279,7 +279,7 @@ how far a line should extend to the right from the indentation guide:
 
 ### Spacing
 
-You can control how far indented lines are shifted left by the `indentation`
+You can control how far indented lines are shifted right by the `indentation`
 option.
 To change the space between lines, use the `line-gap` option.
 ```typ
