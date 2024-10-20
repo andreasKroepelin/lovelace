@@ -110,6 +110,7 @@
   line-numbering: "1",
   line-number-supplement: "Line",
   stroke: 1pt + gray,
+  code-offset: .5em,
   indentation: 1em,
   hooks: 0pt,
   line-gap: .8em,
@@ -267,10 +268,14 @@
       ),
     ),
   )
-
+  let line-number-x = if line-numbering == none { -1 } else { 0 }
   grid(
     columns: max-x + 1 + line-number-correction,
-    column-gutter: indentation / 2,
+    inset: (x, y) => {
+      if x == line-number-x or y == 0 { (:) }
+      else if x == line-number-x + 1 { (left: code-offset) }
+      else { (left: indentation) }
+    },
     row-gutter: line-gap,
     ..cells,
     ..decoration,
