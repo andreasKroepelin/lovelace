@@ -116,6 +116,7 @@
   booktabs-stroke: black + 2pt,
   booktabs: false,
   title: none,
+  title-inset: .8em,
   numbered-title: none,
   ..children,
 ) = {
@@ -241,7 +242,7 @@
         x: 0, y: 0,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
-        inset: if title != none { (y: .8em) } else { 0pt },
+        inset: if title != none { (y: title-inset) } else { 0pt },
         stroke: if title == none {
           (
             top: booktabs-stroke,
