@@ -330,6 +330,25 @@ you can do something like
 
 ![title](examples/title.svg)
 
+You can also set a background behind your title, for instance with:
+```typ
+#pseudocode-list(title: smallcaps[Fancy-Algorithm], title-background: true, title-background-fill: gradient.linear(red, blue))[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![title-background](examples/title-background.svg)
+
 #### Booktabs
 
 If you like wrapping your algorithm in elegant horizontal lines, you can do so
@@ -377,7 +396,26 @@ You can change that with the option `booktabs-stroke` to any valid
 The inner line will always have the same stroke as the outer ones, just with
 half the thickness.
 
+#### Sidelines
 
+In addition to the booktabs lines, you can add lines on the side of the algorithm to wrap your pseudocode in a full rectangle frame:
+```typ
+#pseudocode-list(booktabs: true, sidelines: true)[
+  + do something
+  + do something else
+  + *while* still something to do
+    + do even more
+    + *if* not done yet *then*
+      + wait a bit
+      + resume working
+    + *else*
+      + go home
+    + *end*
+  + *end*
+]
+```
+
+![frame](examples/frame.svg)
 
 ### Algorithm as figure
 
