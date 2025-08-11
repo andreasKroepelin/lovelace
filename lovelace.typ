@@ -117,7 +117,7 @@
   booktabs: false,
   booktab-title: true,
   sidelines: false,
-  title-background-fill: rgb("#e5e5e5"),
+  title-background-fill: gray,
   title-background: false,
   title: none,
   title-inset: .8em,
