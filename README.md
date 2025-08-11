@@ -500,7 +500,7 @@ arguments:
 [`booktab-title`](#booktabs) | bool | `true`
 [`title-background`](#title) | bool | `false`
 [`title-backgound-fill`](#title) | color, gradient or tiling | `gray`
-[`title-inset`](#title) | relative | `.8em`
+[`title-inset-y`](#title) | relative | `.8em`
 
 Until Typst supports user defined types, we can use the following trick when
 wanting to set own default values for these options.

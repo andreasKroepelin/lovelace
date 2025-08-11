@@ -120,7 +120,7 @@
   title-background-fill: gray,
   title-background: false,
   title: none,
-  title-inset: .8em,
+  title-inset-y: .8em,
   side-inset: 0em,
   numbered-title: none,
   ..children,
@@ -283,7 +283,7 @@
         x: 0, y: 0,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
-        inset: if title != none { (x: avoid-tab-inset + side-inset, y: title-inset) } else { 0pt },
+        inset: if title != none { (x: avoid-tab-inset + side-inset, y: title-inset-y) } else { 0pt },
         stroke: if title == none {
           (
             top: booktabs-stroke,
