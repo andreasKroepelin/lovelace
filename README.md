@@ -499,7 +499,7 @@ arguments:
 [`numbered-title`](#algorithm-as-figure) | content or `none` | `none`
 [`booktab-title`](#booktabs) | bool | `true`
 [`title-background`](#title) | bool | `false`
-[`title-backgound-fill`](#title) | color, gradient or tiling | `gray`
+[`title-background-fill`](#title) | color, gradient or tiling | `gray`
 [`title-inset-y`](#title) | relative | `.8em`
 
 Until Typst supports user defined types, we can use the following trick when
