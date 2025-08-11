@@ -394,7 +394,7 @@ By default, the outer booktab strokes are `black + 2pt`.
 You can change that with the option `booktabs-stroke` to any valid
 [Typst stroke](https://typst.app/docs/reference/visualize/stroke/).
 The inner line will always have the same stroke as the outer ones, just with
-half the thickness.
+half the thickness. You can remove the inner line by setting `booktab-title` to `false`.
 
 #### Sidelines
 
@@ -416,6 +416,8 @@ In addition to the booktabs lines, you can add lines on the side of the algorith
 ```
 
 ![frame](examples/frame.svg)
+
+If you want to add padding to your pseudocode, for instance within the sidelines, you can adjust the `side-inset` parameter.
 
 ### Algorithm as figure
 
@@ -491,8 +493,14 @@ arguments:
 [`line-gap`](#spacing) | length | `.8em`
 [`booktabs`](#booktabs) | bool | `false`
 [`booktabs-stroke`](#booktabs) | stroke | `2pt + black`
+[`sidelines`](#sidelines) | bool | `false`
+[`side-inset`](#sidelines) | relative | `Oem`
 [`title`](#title) | content or `none` | `none`
 [`numbered-title`](#algorithm-as-figure) | content or `none` | `none`
+[`booktab-title`](#booktabs) | bool | `true`
+[`title-background`](#title) | bool | `false`
+[`title-backgound-fill`](#title) | color, gradient or tiling | `gray`
+[`title-inset`](#title) | relative | `.8em`
 
 Until Typst supports user defined types, we can use the following trick when
 wanting to set own default values for these options.
