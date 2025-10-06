@@ -61,10 +61,14 @@
   }
 }
 
-#let line-number-figure(number, label, supplement, line-numbering) = {
+#let line-number-figure(number, label, supplement, line-numbering, number-align) = {
   if line-numbering == none { return }
   counter(figure.where(kind: "lovelace-line-number")).update(number - 1)
-  show: align.with(right + horizon)
+
+  if number-align == auto {
+    number-align = right + horizon
+  }
+  show: align.with(number-align)
   text(size: .8em, number-width: "tabular")[#numbering(line-numbering, number)]
 
   if label != none {
@@ -118,6 +122,7 @@
   title: none,
   title-inset: .8em,
   numbered-title: none,
+  number-align: auto,
   ..children,
 ) = {
   children = children.pos().map(normalize-line)
@@ -145,7 +150,8 @@
               line-number,
               child.label,
               line-number-supplement,
-              line-numbering
+              line-numbering,
+              number-align
             ),
             kind: "number",
           )

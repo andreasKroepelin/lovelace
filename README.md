@@ -166,6 +166,17 @@ When using the `pseudocode` function, you can achieve the same using
 )
 ```
 
+If you want, you can also choose the line numbering alignment using the `number-align` option:
+
+```typ
+#pseudocode-list(number-align: top + right)[
+  + Normal line with a number
+  + #box(height: 3em, fill: gray)[#align(horizon)[Multiple lines]]
+]
+```
+
+![number-align](examples/number-align.svg)
+
 #### More line number customisation
 
 Other than `none`, you can assign anything listed
