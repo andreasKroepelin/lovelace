@@ -437,7 +437,7 @@ Together with the `title` option, you can produce
   <img alt="booktabs-title" src="examples/booktabs-title-light.svg">
 </picture>
 
-By default, the outer booktab strokes are `black + 2pt`.
+By default, the outer booktab strokes are `text.fill + 2pt`.
 You can change that with the option `booktabs-stroke` to any valid
 [Typst stroke](https://typst.app/docs/reference/visualize/stroke/).
 The inner line will always have the same stroke as the outer ones, just with

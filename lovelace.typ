@@ -264,8 +264,8 @@
         y: 0,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
-        inset: if title != none { (y: title-inset) } else { 0pt },
-        stroke: if title == none {
+        inset: if resolved-title != none { (y: title-inset) } else { 0pt },
+        stroke: if resolved-title == none {
           (
             top: resolved-booktabs-stroke,
           )
