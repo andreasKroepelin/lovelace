@@ -1,6 +1,6 @@
 [package]
 name = "lovelace"
-version = "0.3.0"
+version = "0.3.1"
 entrypoint = "lib.typ"
 authors = ["Andreas Kröpelin", "Lovelace contributors"]
 license = "MIT"
