@@ -146,9 +146,9 @@ The initial example then looks like this:
 ```
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="examples/simple-no-number-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="examples/simple-no-number-light.svg">
-  <img alt="simple-no-number" src="examples/simple-no-number-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="examples/simple-no-numbers-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/simple-no-numbers-light.svg">
+  <img alt="simple-no-numbers" src="examples/simple-no-numbers-light.svg">
 </picture>
 
 (You can also pass this keyword argument to `pseudocode`.)
