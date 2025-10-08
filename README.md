@@ -189,6 +189,19 @@ that in your pseudocode?
 
 ![roman](examples/roman.svg)
 
+By default, line numbers are placed with the alignment `horizon + right`, which
+can look weird when a single step in the algorithm spans multiple typesetting
+lines.
+You can modify the line numbering alignment using the `number-align` option:
+
+```typ
+#pseudocode-list(number-align: top + right)[
+  + Single line
+  + Multiple \ lines
+]
+```
+
+![number-align](examples/number-align.svg)
 
 ### Referencing lines
 
