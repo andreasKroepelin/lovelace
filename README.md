@@ -192,10 +192,11 @@ that in your pseudocode?
 By default, line numbers are placed with the alignment `horizon + right`, which
 can look weird when a single step in the algorithm spans multiple typesetting
 lines.
-You can modify the line numbering alignment using the `number-align` option:
+You can modify the line numbering alignment using the `line-number-alignment`
+option:
 
 ```typ
-#pseudocode-list(number-align: top + right)[
+#pseudocode-list(line-number-alignment: top + right)[
   + Single line
   + Multiple \ lines
 ]
@@ -390,6 +391,9 @@ You can change that with the option `booktabs-stroke` to any valid
 The inner line will always have the same stroke as the outer ones, just with
 half the thickness.
 
+By setting the `title-inset` option, you can specify the space around the title:
+
+![title-inset](examples/title-inset.svg)
 
 
 ### Algorithm as figure
@@ -460,6 +464,7 @@ arguments:
 --- | --- | ---
 [`line-numbering`](#line-numbers) | `none` or a [numbering](https://typst.app/docs/reference/model/numbering/#parameters-numbering) | `"1"`
 [`line-number-supplement`](#more-line-number-customisation) | content | `"Line"`
+[`line-number-alignment`](#more-line-number-customisation) | alignment | `horizon + right`
 [`stroke`](#indentation-guides) | stroke | `1pt + gray`
 [`hooks`](#end-blocks-with-hooks) | length | `0pt`
 [`indentation`](#spacing) | length | `1em`
@@ -467,6 +472,7 @@ arguments:
 [`booktabs`](#booktabs) | bool | `false`
 [`booktabs-stroke`](#booktabs) | stroke | `2pt + black`
 [`title`](#title) | content or `none` | `none`
+[`title-inset`](#booktabs) | length | `0.8em`
 [`numbered-title`](#algorithm-as-figure) | content or `none` | `none`
 
 Until Typst supports user defined types, we can use the following trick when

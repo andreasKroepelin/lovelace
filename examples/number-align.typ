@@ -3,7 +3,7 @@
 #set text(font: "TeX Gyre Pagella")
 #show math.equation: set text(font: "TeX Gyre Pagella Math")
 
-#pseudocode-list(number-align: top + right)[
+#pseudocode-list(line-number-alignment: top + right)[
   + Single line
   + Multiple \ lines
 ]

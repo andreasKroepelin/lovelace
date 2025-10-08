@@ -113,6 +113,7 @@
 #let pseudocode(
   line-numbering: "1",
   line-number-supplement: "Line",
+  line-number-alignment: auto,
   stroke: 1pt + gray,
   indentation: 1em,
   hooks: 0pt,
@@ -122,7 +123,6 @@
   title: none,
   title-inset: .8em,
   numbered-title: none,
-  number-align: auto,
   ..children,
 ) = {
   children = children.pos().map(normalize-line)
@@ -151,7 +151,7 @@
               child.label,
               line-number-supplement,
               line-numbering,
-              number-align
+              line-number-alignment
             ),
             kind: "number",
           )
