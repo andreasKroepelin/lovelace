@@ -534,7 +534,7 @@ arguments:
 [`indentation`](#spacing) | length | `1em`
 [`line-gap`](#spacing) | length | `.8em`
 [`booktabs`](#booktabs) | bool | `false`
-[`booktabs-stroke`](#booktabs) | stroke | `2pt + black`
+[`booktabs-stroke`](#booktabs) | stroke | `2pt + text.fill`
 [`title`](#title) | content or `none` | `none`
 [`title-inset`](#booktabs) | length | `0.8em`
 [`numbered-title`](#algorithm-as-figure) | content or `none` | `none`

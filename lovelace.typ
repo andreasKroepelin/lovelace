@@ -124,14 +124,14 @@
   indentation: 1em,
   hooks: 0pt,
   line-gap: .8em,
-  booktabs-stroke: black + 2pt,
+  booktabs-stroke: auto,
   booktabs: false,
   title: none,
   title-inset: .8em,
   numbered-title: none,
   ..children,
-) = {
-  children = children.pos().map(normalize-line)
+) = context {
+  let resolved-children = children.pos().map(normalize-line)
 
   let collect-precursors(level, line-number, y, children) = {
     let precursors = ()
@@ -191,7 +191,7 @@
     precursors
   }
 
-  let precursors = collect-precursors(0, 1, 0, children)
+  let precursors = collect-precursors(0, 1, 0, resolved-children)
   let max-x = precursors.fold(
     0,
     (curr-max, prec) => {
@@ -203,16 +203,20 @@
     },
   )
 
-  if numbered-title != none {
+  let resolved-title = if numbered-title != none {
     if numbered-title == [] {
-      title = strong(identify-algorithm)
+      strong(identify-algorithm)
     } else {
-      title = [*#identify-algorithm:* #numbered-title]
+      [*#identify-algorithm:* #numbered-title]
     }
   }
 
-  if not booktabs {
-    booktabs-stroke = none
+  let resolved-booktabs-stroke = if not booktabs {
+    none
+  } else if booktabs-stroke == auto {
+    2pt + text.fill
+  } else {
+    booktabs-stroke
   }
 
   let line-number-correction = if line-numbering != none { 1 } else { 0 }
@@ -263,16 +267,16 @@
         inset: if title != none { (y: title-inset) } else { 0pt },
         stroke: if title == none {
           (
-            top: booktabs-stroke,
+            top: resolved-booktabs-stroke,
           )
         } else {
           (
-            top: booktabs-stroke,
-            bottom: half-stroke(booktabs-stroke),
+            top: resolved-booktabs-stroke,
+            bottom: half-stroke(resolved-booktabs-stroke),
           )
         },
         align: left,
-        title,
+        resolved-title,
       ),
     ),
     grid.footer(
@@ -281,7 +285,7 @@
         y: max-y + 1,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
-        stroke: (top: booktabs-stroke),
+        stroke: (top: resolved-booktabs-stroke),
         none,
       ),
     ),
