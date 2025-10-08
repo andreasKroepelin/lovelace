@@ -203,14 +203,12 @@
     },
   )
 
-  let resolved-title = if numbered-title != none {
-    if numbered-title == [] {
-      strong(identify-algorithm)
-    } else {
-      [*#identify-algorithm:* #numbered-title]
-    }
-  } else {
+  let resolved-title = if numbered-title == none {
     title
+  } else if numbered-title == [] {
+    strong(identify-algorithm)
+  } else {
+    [*#identify-algorithm:* #numbered-title]
   }
 
   let resolved-booktabs-stroke = if not booktabs {
