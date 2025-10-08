@@ -171,7 +171,7 @@ If you want, you can also choose the line numbering alignment using the `number-
 ```typ
 #pseudocode-list(number-align: top + right)[
   + Normal line with a number
-  + #box(height: 3em, fill: gray)[#align(horizon)[Multiple lines]]
+  + Multiple \ lines
 ]
 ```
 

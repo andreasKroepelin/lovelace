@@ -5,6 +5,6 @@
 
 #pseudocode-list(number-align: top + right)[
   + Normal line with a number
-  + #box(height: 3em, fill: gray)[#align(horizon)[Multiple lines]]
+  + Multiple \ lines
 ]
 
