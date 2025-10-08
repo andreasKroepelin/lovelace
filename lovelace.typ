@@ -209,6 +209,8 @@
     } else {
       [*#identify-algorithm:* #numbered-title]
     }
+  } else {
+    title
   }
 
   let resolved-booktabs-stroke = if not booktabs {
