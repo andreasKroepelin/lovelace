@@ -1,5 +1,5 @@
-#import "../lib.typ": *
-#set page(width: auto, height: auto, margin: 1em)
+#import "example-setup.typ": *
+#show: example-setup
 #set text(font: "Cinzel")
 
 #pseudocode-list(line-numbering: "I:")[

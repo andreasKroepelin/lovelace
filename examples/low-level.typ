@@ -1,7 +1,5 @@
-#import "../lib.typ": *
-#set page(width: auto, height: auto, margin: 1em)
-#set text(font: "TeX Gyre Pagella")
-#show math.equation: set text(font: "TeX Gyre Pagella Math")
+#import "example-setup.typ": *
+#show: example-setup
 
 #pseudocode(
   [do something],
@@ -15,9 +13,7 @@
       [resume working],
     ),
     [*else*],
-    indent(
-      [go home],
-    ),
+    indent([go home]),
     [*end*],
   ),
   [*end*],

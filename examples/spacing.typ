@@ -1,7 +1,5 @@
-#import "../lib.typ": *
-#set page(width: auto, height: auto, margin: 1em)
-#set text(font: "TeX Gyre Pagella")
-#show math.equation: set text(font: "TeX Gyre Pagella Math")
+#import "example-setup.typ": *
+#show: example-setup
 
 #pseudocode-list(indentation: 3em, line-gap: 1.5em)[
   + do something
