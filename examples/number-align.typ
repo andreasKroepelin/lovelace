@@ -4,7 +4,7 @@
 #show math.equation: set text(font: "TeX Gyre Pagella Math")
 
 #pseudocode-list(number-align: top + right)[
-  + Normal line with a number
+  + Single line
   + Multiple \ lines
 ]
 

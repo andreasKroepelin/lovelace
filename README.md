@@ -166,17 +166,6 @@ When using the `pseudocode` function, you can achieve the same using
 )
 ```
 
-If you want, you can also choose the line numbering alignment using the `number-align` option:
-
-```typ
-#pseudocode-list(number-align: top + right)[
-  + Normal line with a number
-  + Multiple \ lines
-]
-```
-
-![number-align](examples/number-align.svg)
-
 #### More line number customisation
 
 Other than `none`, you can assign anything listed
@@ -200,6 +189,19 @@ that in your pseudocode?
 
 ![roman](examples/roman.svg)
 
+By default, line numbers are placed with the alignment `horizon + right`, which
+can look weird when a single step in the algorithm spans multiple typesetting
+lines.
+You can modify the line numbering alignment using the `number-align` option:
+
+```typ
+#pseudocode-list(number-align: top + right)[
+  + Single line
+  + Multiple \ lines
+]
+```
+
+![number-align](examples/number-align.svg)
 
 ### Referencing lines
 
