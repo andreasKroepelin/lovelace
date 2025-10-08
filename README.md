@@ -59,10 +59,11 @@ into pseudocode:
 resulting in:
 
 ![simple](examples/simple.svg)
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="examples/simple-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="examples/simple-light.svg">
-  <img alt="Fallback image description" src="examples/simple-dark.svg">
+  <img alt="Fallback image description" src="examples/simple-light.svg">
 </picture>
 
 
