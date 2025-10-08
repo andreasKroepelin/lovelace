@@ -9,7 +9,7 @@
 
   metadata((
     identifier: "lovelace line label",
-    label: it
+    label: it,
   ))
 }
 
@@ -61,7 +61,13 @@
   }
 }
 
-#let line-number-figure(number, label, supplement, line-numbering, number-align) = {
+#let line-number-figure(
+  number,
+  label,
+  supplement,
+  line-numbering,
+  number-align,
+) = {
   if line-numbering == none { return }
   counter(figure.where(kind: "lovelace-line-number")).update(number - 1)
 
@@ -105,7 +111,7 @@
   let algos = query(figure.where(kind: "algorithm").before(here()))
   if algos.len() > 0 {
     let algo = algos.last()
-    
+
     [#algo.supplement #algo.counter.display(algo.numbering)]
   }
 }
@@ -151,7 +157,7 @@
               child.label,
               line-number-supplement,
               line-numbering,
-              line-number-alignment
+              line-number-alignment,
             ),
             kind: "number",
           )
@@ -166,7 +172,7 @@
           level + 1,
           line-number,
           y,
-          child
+          child,
         )
         let nested-lines = nested-precursors.filter(p => p.kind == "content")
         let indent-precursor = (
@@ -186,13 +192,16 @@
   }
 
   let precursors = collect-precursors(0, 1, 0, children)
-  let max-x = precursors.fold(0, (curr-max, prec) => {
-    if "x" in prec {
-      calc.max(curr-max, prec.x)
-    } else {
-      curr-max
-    }
-  })
+  let max-x = precursors.fold(
+    0,
+    (curr-max, prec) => {
+      if "x" in prec {
+        calc.max(curr-max, prec.x)
+      } else {
+        curr-max
+      }
+    },
+  )
 
   if numbered-title != none {
     if numbered-title == [] {
@@ -209,43 +218,46 @@
   let line-number-correction = if line-numbering != none { 1 } else { 0 }
   let title-correction = if title != none { 1 } else { 1 }
 
-  let cells = precursors.map(prec => {
-    if prec.kind == "content" {
-      grid.cell(
-        x: prec.x + line-number-correction,
-        y: prec.y + title-correction,
-        colspan: max-x + 1 - prec.x,
-        rowspan: 1,
-        stroke: none,
-        prec.body,
-      )
-    } else if prec.kind == "number" and line-numbering != none {
-      grid.cell(
-        x: 0,
-        y: prec.y + title-correction,
-        colspan: 1,
-        rowspan: 1,
-        stroke: none,
-        prec.body,
-      )
-    } else if prec.kind == "indent" {
-      grid.cell(
-        x: prec.x + line-number-correction,
-        y: prec.y + title-correction,
-        colspan: 1,
-        rowspan: prec.rowspan,
-        stroke: (left: stroke, bottom: stroke, rest: none),
-        h(hooks),
-      )
-    } else { () }
-  }).flatten()
+  let cells = precursors
+    .map(prec => {
+      if prec.kind == "content" {
+        grid.cell(
+          x: prec.x + line-number-correction,
+          y: prec.y + title-correction,
+          colspan: max-x + 1 - prec.x,
+          rowspan: 1,
+          stroke: none,
+          prec.body,
+        )
+      } else if prec.kind == "number" and line-numbering != none {
+        grid.cell(
+          x: 0,
+          y: prec.y + title-correction,
+          colspan: 1,
+          rowspan: 1,
+          stroke: none,
+          prec.body,
+        )
+      } else if prec.kind == "indent" {
+        grid.cell(
+          x: prec.x + line-number-correction,
+          y: prec.y + title-correction,
+          colspan: 1,
+          rowspan: prec.rowspan,
+          stroke: (left: stroke, bottom: stroke, rest: none),
+          h(hooks),
+        )
+      } else { () }
+    })
+    .flatten()
 
   let max-y = cells.fold(0, (curr-max, cell) => calc.max(curr-max, cell.y))
 
   let decoration = (
     grid.header(
       grid.cell(
-        x: 0, y: 0,
+        x: 0,
+        y: 0,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
         inset: if title != none { (y: title-inset) } else { 0pt },
@@ -260,7 +272,7 @@
           )
         },
         align: left,
-        title
+        title,
       ),
     ),
     grid.footer(
@@ -270,7 +282,7 @@
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
         stroke: (top: booktabs-stroke),
-        none
+        none,
       ),
     ),
   )
@@ -287,11 +299,14 @@
 
 
 #let is-not-empty(it) = {
-  return type(it) != content or not (
-    it.fields() == (:) or
-    (it.has("children") and it.children == ()) or
-    (it.has("children") and it.children.all(c => not is-not-empty(c))) or
-    (it.has("text") and it.text.match(regex("^\\s*$")) != none)
+  return (
+    type(it) != content
+      or not (
+        it.fields() == (:)
+          or (it.has("children") and it.children == ())
+          or (it.has("children") and it.children.all(c => not is-not-empty(c)))
+          or (it.has("text") and it.text.match(regex("^\\s*$")) != none)
+      )
   )
 }
 
@@ -306,9 +321,9 @@
   let transform-list(it, numbered) = {
     if not it.has("children") {
       if numbered {
-        return (it, )
+        return (it,)
       } else {
-        return (no-number(it), )
+        return (no-number(it),)
       }
     }
     let transformed = ()
@@ -320,9 +335,9 @@
       if f in (enum.item, list.item) {
         items += transform-list(child.body, f == enum.item)
       } else if (
-        child.func() == metadata and
-        child.value.at("identifier", default: "") == "lovelace line label" and
-        "label" in child.value
+        child.func() == metadata
+          and child.value.at("identifier", default: "") == "lovelace line label"
+          and "label" in child.value
       ) {
         non-item-label = child.value.label
       } else {
@@ -345,7 +360,7 @@
 
   let transformed = unwrap-singleton(transform-list(body, false))
   if type(transformed) != array {
-    transformed = (transformed, )
+    transformed = (transformed,)
   }
   pseudocode(..config.named(), ..transformed)
 }
