@@ -58,14 +58,11 @@ into pseudocode:
 ```
 resulting in:
 
-![simple](examples/simple.svg)
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="examples/simple-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="examples/simple-light.svg">
-  <img alt="Fallback image description" src="examples/simple-light.svg">
+  <img alt="simple" src="examples/simple-light.svg">
 </picture>
-
 
 As you can see, every list item becomes one line of code and nested lists become
 indented blocks.
@@ -86,7 +83,11 @@ No problem!
 ]
 ```
 
-![custom](examples/custom.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/custom-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/custom-light.svg">
+  <img alt="custom" src="examples/custom-light.svg">
+</picture>
 
 ### Lower level interface
 
@@ -144,7 +145,11 @@ The initial example then looks like this:
 ]
 ```
 
-![no-number](examples/simple-no-numbers.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/simple-no-number-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/simple-no-number-light.svg">
+  <img alt="simple-no-number" src="examples/simple-no-number-light.svg">
+</picture>
 
 (You can also pass this keyword argument to `pseudocode`.)
 
@@ -158,7 +163,11 @@ lines, you can use `-` items instead of `+` items in `pseudocode-list`:
 ]
 ```
 
-![number-no-number](examples/number-no-number.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/number-no-number-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/number-no-number-light.svg">
+  <img alt="number-no-number" src="examples/number-no-number-light.svg">
+</picture>
 
 It's easy to remember:
 `-` items usually produce unnumbered lists and `+` items produce numbered lists!
@@ -194,7 +203,11 @@ that in your pseudocode?
 ]
 ```
 
-![roman](examples/roman.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/roman-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/roman-light.svg">
+  <img alt="roman" src="examples/roman-light.svg">
+</picture>
 
 By default, line numbers are placed with the alignment `horizon + right`, which
 can look weird when a single step in the algorithm spans multiple typesetting
@@ -209,7 +222,11 @@ option:
 ]
 ```
 
-![number-align](examples/number-align.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/number-align-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/number-align-light.svg">
+  <img alt="number-align" src="examples/number-align-light.svg">
+</picture>
 
 ### Referencing lines
 
@@ -226,7 +243,11 @@ Inside `pseudocode-list`, you can use `line-label`:
 The relevance of the step in @important cannot be overstated.
 ```
 
-![label](examples/label.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/label-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/label-light.svg">
+  <img alt="label" src="examples/label-light.svg">
+</picture>
 
 When using `pseudocode`, you can use `with-line-label`:
 ```typ
@@ -274,7 +295,11 @@ The example from the beginning becomes:
 ]
 ```
 
-![no-stroke](examples/simple-no-stroke.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/simple-no-stroke-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/simple-no-stroke-light.svg">
+  <img alt="simple-no-stroke" src="examples/simple-no-stroke-light.svg">
+</picture>
 
 #### End blocks with hooks
 
@@ -296,7 +321,11 @@ how far a line should extend to the right from the indentation guide:
 ]
 ```
 
-![hooks](examples/hooks.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/hooks-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/hooks-light.svg">
+  <img alt="hooks" src="examples/hooks-light.svg">
+</picture>
 
 
 ### Spacing
@@ -320,7 +349,11 @@ To change the space between lines, use the `line-gap` option.
 ]
 ```
 
-![spacing](examples/spacing.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/spacing-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/spacing-light.svg">
+  <img alt="spacing" src="examples/spacing-light.svg">
+</picture>
 
 
 ### Decorations
@@ -349,7 +382,11 @@ you can do something like
 ]
 ```
 
-![title](examples/title.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/title-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/title-light.svg">
+  <img alt="title" src="examples/title-light.svg">
+</picture>
 
 #### Booktabs
 
@@ -371,7 +408,11 @@ by setting the `booktabs` option to `true`.
 ]
 ```
 
-![booktabs](examples/booktabs.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/booktabs-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/booktabs-light.svg">
+  <img alt="booktabs" src="examples/booktabs-light.svg">
+</picture>
 
 Together with the `title` option, you can produce
 ```typ
@@ -390,7 +431,11 @@ Together with the `title` option, you can produce
 ]
 ```
 
-![booktabs-title](examples/booktabs-title.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/booktabs-title-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/booktabs-title-light.svg">
+  <img alt="booktabs-title" src="examples/booktabs-title-light.svg">
+</picture>
 
 By default, the outer booktab strokes are `black + 2pt`.
 You can change that with the option `booktabs-stroke` to any valid
@@ -400,7 +445,11 @@ half the thickness.
 
 By setting the `title-inset` option, you can specify the space around the title:
 
-![title-inset](examples/title-inset.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/title-inset-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/title-inset-light.svg">
+  <img alt="title-inset" src="examples/title-inset-light.svg">
+</picture>
 
 
 ### Algorithm as figure
@@ -429,7 +478,11 @@ you can use Typst's `figure` function with a custom `kind`.
 )
 ```
 
-![figure](examples/figure.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/figure-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/figure-light.svg">
+  <img alt="figure" src="examples/figure-light.svg">
+</picture>
 
 If you want to have the algorithm counter inside the title instead (see previous
 section), there is the option `numbered-title`:
@@ -456,7 +509,11 @@ section), there is the option `numbered-title`:
 See @cool for details on how to do something cool.
 ```
 
-![figure-title](examples/figure-title.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="examples/figure-title-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="examples/figure-title-light.svg">
+  <img alt="figure-title" src="examples/figure-title-light.svg">
+</picture>
 
 Note that the `numbered-title` option only makes sense when nesting your
 pseudocode inside a figure with `kind: "algorithm"`, otherwise it produces

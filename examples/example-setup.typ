@@ -2,7 +2,7 @@
 
 #let example-setup(body) = {
   let theme = if "theme" in sys.inputs { sys.inputs.theme } else { "light" }
-  let bgs = (light: white, dark: luma(50))
+  let bgs = (light: none, dark: none)
   let fgs = (light: black, dark: luma(200))
   set page(width: auto, height: auto, margin: 1em, fill: bgs.at(theme))
   set text(font: "TeX Gyre Pagella", fill: fgs.at(theme))
