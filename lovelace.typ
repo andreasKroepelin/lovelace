@@ -119,8 +119,13 @@
   line-gap: .8em,
   booktabs-stroke: black + 2pt,
   booktabs: false,
+  booktab-title: true,
+  sidelines: false,
+  title-background-fill: gray,
+  title-background: false,
   title: none,
-  title-inset: .8em,
+  title-inset-y: .8em,
+  side-inset: 0em,
   numbered-title: none,
   number-align: auto,
   ..children,
@@ -205,6 +210,29 @@
   if not booktabs {
     booktabs-stroke = none
   }
+  
+  let avoid-tab-inset = if booktabs-stroke != none {
+      booktabs-stroke.thickness/2
+    } else {
+      0em
+    }
+
+  let sidelines-stroke = booktabs-stroke
+
+  if not sidelines {
+    sidelines-stroke = none
+  }
+
+  if not title-background {
+    title-background-fill = none
+  }
+
+  let booktab-title-stroke = if booktab-title {
+      half-stroke(booktabs-stroke)
+    } else {
+      none
+    } 
+
 
   let line-number-correction = if line-numbering != none { 1 } else { 0 }
   let title-correction = if title != none { 1 } else { 1 }
@@ -242,13 +270,26 @@
 
   let max-y = cells.fold(0, (curr-max, cell) => calc.max(curr-max, cell.y))
 
+  let max-x-in-row = (0, )
+
+  let i = 1
+  while i < max-y {
+    max-x-in-row.push(0)
+    i = i + 1
+  }
+  
+  for cell in cells {
+    let curr-max-x-in-y = max-x-in-row.at(cell.y)
+    max-x-in-row.insert(cell.y, calc.max(curr-max-x-in-y, cell.x))
+  }
+
   let decoration = (
     grid.header(
       grid.cell(
         x: 0, y: 0,
         colspan: max-x + 1 + line-number-correction,
         rowspan: 1,
-        inset: if title != none { (y: title-inset) } else { 0pt },
+        inset: if title != none { (x: avoid-tab-inset + side-inset, y: title-inset-y) } else { 0pt },
         stroke: if title == none {
           (
             top: booktabs-stroke,
@@ -256,9 +297,10 @@
         } else {
           (
             top: booktabs-stroke,
-            bottom: half-stroke(booktabs-stroke),
+            bottom: booktab-title-stroke,
           )
         },
+        fill: title-background-fill,
         align: left,
         title
       ),
@@ -273,11 +315,14 @@
         none
       ),
     ),
+    grid.vline(stroke:sidelines-stroke),
+    grid.vline(x:0, stroke:sidelines-stroke),
   )
 
   grid(
     columns: max-x + 1 + line-number-correction,
     column-gutter: indentation / 2,
+    inset: (x, y) => if x == 0 { (left: avoid-tab-inset + side-inset) } + if x == max-x-in-row.at(y) { (right: avoid-tab-inset + side-inset) } + (x:0pt),
     row-gutter: line-gap,
     ..cells,
     ..decoration,
