@@ -102,7 +102,7 @@
       dash: s.dash,
       miter-limit: s.miter-limit,
     )
-  } else if type(s) == dictionary {
+  } else {
     half-stroke(stroke(s))
   }
 }
