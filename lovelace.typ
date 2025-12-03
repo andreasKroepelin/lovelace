@@ -72,10 +72,10 @@
   counter(figure.where(kind: "lovelace-line-number")).update(number - 1)
 
   if number-align == auto {
-    number-align = right + horizon
+    number-align = right
   }
   show: align.with(number-align)
-  text(size: .8em, number-width: "tabular")[#numbering(line-numbering, number)]
+  text(size: 1em, number-width: "tabular", fill: luma(100)[#numbering(line-numbering, number)]
 
   if label != none {
     box[
