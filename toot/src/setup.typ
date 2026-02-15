@@ -23,21 +23,5 @@
       #import "@preview/lovelace:0.3.1": *
       ```.text,
     ),
-    (
-      trigger: "// LIGHT DARK",
-      expansion: ```typ
-      #show: body => {
-        let theme = if sys.inputs.at("theme", default: "light") == "light" {
-          (bg: white, fg: black)
-        } else {
-          (bg: luma(50), fg: luma(210))
-        }
-        set page(fill: theme.bg)
-        set text(fill: theme.fg)
-
-        body
-      }
-      ```.text,
-    ),
   ),
 )
