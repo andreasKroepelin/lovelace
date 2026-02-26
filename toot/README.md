@@ -1,6 +1,6 @@
 # Toot
 
-This is the _Typst Opinioated Online Tutorial_ for _Lovelace_.
+This is the _Typst Opinionated Online Tutorial_ for _Lovelace_.
 
 If you haven't already, install the `toot-builder` CLI via
 ```sh
