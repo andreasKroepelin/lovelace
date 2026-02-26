@@ -20,24 +20,11 @@ Main features include:
 - lots of customisation with sensible defaults
 
 
-## Usage
-
-- [Getting started](#getting-started)
-- [Lower level interface](#lower-level-interface)
-- [Line numbers](#line-numbers)
-- [Referencing lines](#referencing-lines)
-- [Indentation guides](#indentation-guides)
-- [Spacing](#spacing)
-- [Decorations](#decorations)
-- [Algorithm as figure](#algorithm-as-figure)
-- [Customisation overview](#customisation-overview)
-- [Exported functions](#exported-functions)
-
-### Getting started
+## Getting started
 
 Import the package using
 ```typ
-#import "@preview/lovelace:0.3.0": *
+#import "@preview/lovelace:0.3.1": *
 ```
 
 The simplest usage is via `pseudocode-list` which transforms a nested list
@@ -60,9 +47,9 @@ into pseudocode:
 resulting in:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="examples/simple-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="examples/simple-light.svg">
-  <img alt="simple" src="examples/simple-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://a5s.eu/toot-lovelace/page2-example0-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://a5s.eu/toot-lovelace/page2-example0-light.svg">
+  <img alt="simple" src="https://a5s.eu/toot-lovelace/page2-example0-light.svg">
 </picture>
 
 As you can see, every list item becomes one line of code and nested lists become
