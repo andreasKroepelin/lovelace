@@ -20,3 +20,5 @@
 #link("algorithm.typ")[Algorithm as `figure`]
 
 #link("overview.typ")[Customization overview]
+
+#link("exported.typ")[Exported functions]
