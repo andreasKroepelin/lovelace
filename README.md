@@ -4,7 +4,7 @@ It is named after the computer science pioneer
 [Ada Lovelace](https://en.wikipedia.org/wiki/Ada_Lovelace) and inspired by the
 [pseudo package](https://ctan.org/pkg/pseudo) for LaTeX.
 
-[![toot](https://img.shields.io/badge/tutorial-toot)](https://a5s.eu/toot-lovelace/)
+[![toot](https://img.shields.io/badge/tutorial-toot-blue)](https://a5s.eu/toot-lovelace/)
 ![GitHub license](https://img.shields.io/github/license/andreasKroepelin/lovelace)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/andreasKroepelin/lovelace)
 ![GitHub Repo stars](https://img.shields.io/github/stars/andreasKroepelin/lovelace)
