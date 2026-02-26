@@ -59,7 +59,3 @@ just use whatever you like.
 
 **To learn more about how to use and customize Lovelace,
 [visit the tutorial](https://a5s.eu/toot-lovelace/).**
-
-
-### Exported functions
-
